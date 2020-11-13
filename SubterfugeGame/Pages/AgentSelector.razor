@@ -1,0 +1,46 @@
+﻿@page  "/selectagents"
+@inject GameService Game
+@inject NavigationManager Nav
+
+<p>Day @Game.Day</p>
+
+@foreach (Agent agent in Game.Agents.Where(a.Allegiance == Allegiance.Ally))
+{
+    if (agent.IsAlive && agent.IsActing)
+    {
+        <button @onclick="() => Unselect(agent)" class="btn btn-primary">@agent.AgentType</button>
+    }
+    else if (NumSelected < MAX_SELECTIONS && agent.IsAlive)
+    {
+        <a href="/selecttarget/@agent.AgentType" class="btn btn-secondary">@agent.AgentType</a>
+    }
+    else
+    {
+        <button class="btn btn-secondary" disabled>@agent.AgentType</button>
+    }
+}
+
+<button class="btn btn-info" @onclick="Submit">Confirm</button>
+
+@code {
+    public const int MAX_SELECTIONS = 2;
+
+    public int NumSelected
+    {
+        get
+        {
+            return Game.Agents.Count(a => a.IsActing);
+        }
+    }
+
+    protected void Unselect(Agent agent)
+    {
+        agent.Reset();
+    }
+
+    protected void Submit()
+    {
+        Game.PlayRound();
+        Nav.NavigateTo("/results");
+    }
+}

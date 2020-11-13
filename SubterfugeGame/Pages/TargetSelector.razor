@@ -1,0 +1,27 @@
+﻿@page "/selecttarget/{agentType:string}"
+@inject NavigationManager NavigationManager
+@inject GameService Game
+
+@foreach (Agent agent in Game.AgentsShuffled)
+{
+    <button @onclick="() => SetTarget(agent)" class="btn btn-secondary">@agent.Codename</button>
+}
+
+@code {
+    [Parameter]
+    public AgentType AgentType { get; set; }
+
+    protected Agent Agent { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        Agent = Game.Agents.Single(a => a.AgentType == AgentType);
+    }
+
+    protected void SetTarget(Agent agent)
+    {
+        Agent.IsActing = true;
+        Agent.Target = agent;
+        NavigationManager.NavigateTo("/selectagents");
+    }
+}
