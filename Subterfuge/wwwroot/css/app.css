@@ -1,7 +1,11 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
-.center-horizontal {
+.center-contents-horizontal {
     text-align: center;
+}
+
+.row + .row {
+    margin-top: 1rem;
 }
 
 /*Anything below here is default for Blazor projects*/

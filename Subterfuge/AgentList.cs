@@ -12,6 +12,7 @@ namespace Subterfuge
 
         public List<Agent> OrderedList { get; protected set; }
         public List<Agent> ShuffledList { get; protected set; }
+        public List<Agent> Allies { get; protected set; }
 
         public int Count => Dictionary.Count;
 
@@ -33,6 +34,8 @@ namespace Subterfuge
 
             ShuffledList = new List<Agent>(OrderedList);
             ShuffledList.Shuffle(GameService.Random);
+
+            Allies = OrderedList.Where(a => a.Allegiance == Allegiance.Ally).ToList();
         }
     }
 }
