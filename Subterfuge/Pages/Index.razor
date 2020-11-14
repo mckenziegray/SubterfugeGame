@@ -1,0 +1,19 @@
+﻿@page "/"
+
+<div class="row">
+    <div class="col-xs-12 center-horizontal">
+        <h1>Subterfuge</h1>
+        <button @onclick="StartGame" class="btn btn-primary">Start</button>
+        <!-- TODO: Customize -->
+        <!-- TODO: Options -->
+        <!-- TODO: How to Play -->
+    </div>
+</div>
+
+@code
+{
+    void StartGame()
+    {
+        Nav.NavigateTo("/selectagents");
+    }
+}
