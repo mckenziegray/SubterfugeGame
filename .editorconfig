@@ -1,4 +1,4 @@
-# More about editorconfig: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
+# https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
 
 [*.cs]
 
@@ -108,13 +108,13 @@ csharp_style_expression_bodied_accessors = when_on_single_line:suggestion
 # Prefer block bodies for constructors
 csharp_style_expression_bodied_constructors = false:suggestion
 # Prefer block bodies for operators
-csharp_style_expression_bodied_indexers = false:suggestion
+csharp_style_expression_bodied_indexers = when_on_single_line:suggestion
 # Prefer expression bodies for lambdas when they will be a single line
 csharp_style_expression_bodied_lambdas = when_on_single_line:suggestion
 # Prefer block bodies for methods
 csharp_style_expression_bodied_methods = false:suggestion
 # Prefer block bodies for operators
-csharp_style_expression_bodied_operators = false:suggestion
+csharp_style_expression_bodied_operators = when_on_single_line:suggestion
 # Prefer expression bodies for properties when they will be a single line
 csharp_style_expression_bodied_properties = when_on_single_line:suggestion
 
@@ -268,6 +268,7 @@ dotnet_naming_rule.private_fields_must_have_underscore_prefix.style		= camel_wit
 dotnet_naming_rule.private_fields_must_have_underscore_prefix.severity	= warning
 
 # Require constants and readonlys to be ALL_CAPS
+# NOTE: a readonly member should only be capitalized if it is a primitive type, but there is no way to specify this
 dotnet_naming_style.all_caps.capitalization					= all_upper
 dotnet_naming_style.all_caps.word_separator					= _
 
@@ -285,7 +286,7 @@ dotnet_naming_symbols.readonlys.required_modifiers			= readonly
 
 dotnet_naming_rule.readonlys_must_be_caps.symbols			= readonlys
 dotnet_naming_rule.readonlys_must_be_caps.style				= all_caps
-dotnet_naming_rule.readonlys_must_be_caps.severity			= warning
+dotnet_naming_rule.readonlys_must_be_caps.severity			= suggestion
 
 # Require interfaces to have the prefix "I"
 dotnet_naming_style.i_prefix.required_prefix					= I

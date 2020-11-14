@@ -2,35 +2,48 @@
 using Subterfuge.Enums;
 using Subterfuge.Exceptions;
 
-namespace Subterfuge.Code
+namespace Subterfuge
 {
     public class Agent
     {
-        private Random _random = new Random();
         public string Codename { get; protected set; }
         public AgentType AgentType { get; protected set; }
         public Gender Gender { get; protected set; }
         public bool IsAlive { get; protected set; }
-        public Allegiance Allegiance { 
+        public Allegiance Allegiance {
             get
             {
-                switch (AgentType)
+                return AgentType switch
                 {
-                    case AgentType.Assassin:
-                    case AgentType.Hacker:
-                    case AgentType.HoneyTrapper:
-                    case AgentType.Interrogator:
-                    case AgentType.Medic:
-                        return Allegiance.Ally;
-                    default:
-                        return Allegiance.Neutral;
-                }
+                    AgentType.Assassin      => Allegiance.Ally,
+                    AgentType.Convoy        => Allegiance.Ally,
+                    AgentType.Hacker        => Allegiance.Ally,
+                    AgentType.Interrogator  => Allegiance.Ally,
+                    AgentType.Marshal       => Allegiance.Ally,
+                    AgentType.Medic         => Allegiance.Ally,
+                    AgentType.Swallow       => Allegiance.Ally,
+                    AgentType.Sentry        => Allegiance.Ally,
+
+                    AgentType.Cutout        => Allegiance.Neutral,
+                    AgentType.Intern        => Allegiance.Neutral,
+
+                    AgentType.Android       => Allegiance.Enemy,
+                    AgentType.Drudge        => Allegiance.Enemy,
+                    AgentType.Fabricator    => Allegiance.Enemy,
+                    AgentType.Mastermind    => Allegiance.Enemy,
+                    AgentType.Saboteur      => Allegiance.Enemy,
+
+                    _ => throw new NotImplementedException()
+                };
             }
         }
         /// <summary>
         /// Whether this agent is acting this round
         /// </summary>
         public bool IsActing { get; set; }
+        /// <summary>
+        /// The agent that this agent is targeting
+        /// </summary>
         public Agent Target { get; set; }
         /// <summary>
         /// The agent blocking this agent
@@ -45,38 +58,44 @@ namespace Subterfuge.Code
         /// </summary>
         protected Agent Killer { get; set; }
         public bool WasAttacked { get; protected set; }
-        public bool IsBlocked { 
-            get
-            {
-                return Blocker?.IsAlive ?? false;
-            } 
-        }
-        public bool IsProtected
+        public bool IsBlocked => Blocker?.IsAlive ?? false;
+        public bool IsProtected => Protector != null && Protector.IsAlive && !Protector.IsBlocked;
+        public bool RequiresTarget => AgentType switch
         {
-            get
+            AgentType.Marshal       => true,
+            AgentType.Swallow       => true,
+            AgentType.Saboteur      => true,
+            AgentType.Convoy        => true,
+            AgentType.Medic         => true,
+            AgentType.Assassin      => true,
+            AgentType.Android       => true,
+            AgentType.Drudge        => true,
+            AgentType.Mastermind    => true,
+            AgentType.Fabricator    => true,
+            AgentType.Cutout        => true,
+            AgentType.Interrogator  => true,
+            AgentType.Hacker        => true,
+            AgentType.Sentry        => true,
+            AgentType.Intern        => true,
+            _ => false
+        };
+        public string Name => AgentType switch
+        {
+            AgentType.Swallow => Gender switch
             {
-                return Protector == null ? false : Protector.IsAlive && !Protector.IsBlocked;
-            }
-        }
+                Gender.Male => "Raven",
+                _ => "Swallow"
+            },
+            _ => AgentType.ToString()
+        };
 
         public Agent(AgentType type)
         {
-            Codename = GenerateCodename();
+            Codename = GameService.GenerateUniqueCodename();
             AgentType = type;
-            Gender = (Gender)_random.Next(2);
+            Gender = (Gender)GameService.Random.Next(2);
             Killer = null;
             Reset();
-        }
-
-        public string GenerateCodename()
-        {
-            return string.Format("{0}{1}-{2}{3}{4}",
-                _random.Next(26) + 'A',
-                _random.Next(26) + 'A',
-                _random.Next(10),
-                _random.Next(10),
-                _random.Next(10)
-                );
         }
 
         public void Kill(Agent killer)
@@ -97,30 +116,24 @@ namespace Subterfuge.Code
 
         public void Act()
         {
+            if (RequiresTarget && Target is null)
+                throw new NoTargetException(AgentType);
+
             switch (AgentType)
             {
                 case AgentType.Assassin:
-                    if (Target == null)
-                        throw new NoTargetException(AgentType);
-
                     if (Target.IsAlive && !IsBlocked && !Target.IsProtected)
                     {
                         Target.Kill(this);
                     }
                     break;
                 case AgentType.Medic:
-                    if (Target == null)
-                        throw new NoTargetException(AgentType);
-
                     if (Target.IsAlive && !IsBlocked)
                     {
                         Target.Protect(this);
                     }
                     break;
-                case AgentType.HoneyTrapper:
-                    if (Target == null)
-                        throw new NoTargetException(AgentType);
-
+                case AgentType.Swallow:
                     if (Target.IsAlive && !IsBlocked)
                     {
                         Target.Block(this);
@@ -144,13 +157,9 @@ namespace Subterfuge.Code
             {
                 case AgentType.Assassin:
                     if (Target.Killer == this)
-                    {
                         report = $"Orders received. Target {Target.Codename} neutralized.";
-                    }
                     else
-                    {
                         report = "Mission compromised. Standing by for further orders.";
-                    }
                     break;
                 case AgentType.Medic:
                     report = $"I got your orders to look after {Target.Codename}.";
@@ -167,7 +176,7 @@ namespace Subterfuge.Code
                         report += " Thankfully, my services were not required.";
                     }
                     break;
-                case AgentType.HoneyTrapper:
+                case AgentType.Swallow:
                     report = "I received your orders to carry out the \"special\" operation.";
                     if (!Target.IsAlive || IsBlocked)
                         report += " I'm sorry to say that I was unsuccessful.";
@@ -176,7 +185,9 @@ namespace Subterfuge.Code
                     break;
                 case AgentType.Interrogator:
                     if (!Target.IsAlive || IsBlocked)
+                    {
                         report = "Due to unforeseen circumstances, I was unable to question the target. Don't worry, we'll get 'em next time.";
+                    }
                     else
                     {
                         report = $"Per your orders, {Target.Codename} was detained and interrogated.";
@@ -186,7 +197,9 @@ namespace Subterfuge.Code
                 case AgentType.Hacker:
                     report = "I got your dead drop, boss.";
                     if (!Target.IsAlive || IsBlocked)
+                    {
                         report += " Unfortunately, I hit a bit of a snag. Sorry. Maybe next time.";
+                    }
                     else
                     {
                         report += $" I did some digging into {Target.Codename}.";
