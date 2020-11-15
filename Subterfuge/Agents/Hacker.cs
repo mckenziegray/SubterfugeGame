@@ -16,14 +16,14 @@ namespace Subterfuge.Agents
 
         public override string GetReport()
         {
-            string report = "I got your dead drop, boss.";
+            string report = "I got your dead drop";
             if (!Target.IsAlive || IsBlocked)
             {
-                report += " Unfortunately, I hit a bit of a snag. Sorry. Maybe next time.";
+                report += ", boss. Unfortunately, I hit a bit of a snag. Sorry. Maybe next time.";
             }
             else
             {
-                report += $" I did some digging into {Target.Codename}.";
+                report += $" and I did some digging into {Target.Codename}.";
 
                 /*
                  * Scenarios:

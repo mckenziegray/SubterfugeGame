@@ -22,9 +22,17 @@
                 <h3>Casualties</h3>
                 <div class="row">
                     <div class="col-12">
-                        @foreach (Agent agent in Game.Agents.ShuffledList.Where(a => a.WasKilled))
-                        {
-                            <p>Agent @agent.Codename was killed by the @agent.Killer.Name. @agent.Gender.ToCommonPronoun() was the @agent.Name.</p>
+                        @{
+                            IEnumerable<Agent> casualties = Game.Agents.ShuffledList.Where(a => a.WasKilled);
+                            foreach (Agent agent in casualties)
+                            {
+                                <p>Agent @agent.Codename was killed by the @agent.Killer.Name. @agent.Gender.ToCommonPronoun() was the @agent.Name.</p>
+                            }
+
+                            if (!casualties.Any())
+                            {
+                                <p>No casualties reported.</p>
+                            }
                         }
                     </div>
                 </div>
