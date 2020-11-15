@@ -68,8 +68,8 @@ namespace Subterfuge
         private static string GenerateCodename()
         {
             return string.Format("{0}{1}-{2}{3}{4}",
-                Random.Next(26) + 'A',
-                Random.Next(26) + 'A',
+                (char)(Random.Next(26) + 'A'),
+                (char)(Random.Next(26) + 'A'),
                 Random.Next(10),
                 Random.Next(10),
                 Random.Next(10)

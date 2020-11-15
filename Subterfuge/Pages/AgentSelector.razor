@@ -6,28 +6,28 @@
         <h2>Day @Game.Day</h2>
         <p>Select up to @GameService.MAX_AGENT_SELECTIONS @(GameService.MAX_AGENT_SELECTIONS == 1 ? "agent" : "agents") to assign.</p>
 
-        @for (int i = 0; i < Game.Agents.Allies.Count; i++)
+        @for (int i = 0; i < Game.Agents.Allies.Count; i+= 2)
         {
             <div class="row justify-content-center">
-                @{
-                    Agent agent1 = Game.Agents.Allies[i];
-                    bool disabled = !agent1.IsActing && NumSelected >= GameService.MAX_AGENT_SELECTIONS;
-                }
-                <div class="col-xs-6 col-sm-5 col-md-3 col-lg-2">
-                    <AgentSelectButton Agent="agent1"
-                                       OnChangeCallback="e => OnAgentCheckboxChanged(e, agent1)"
-                                       Disabled="disabled" />
-                </div>
-
-                @if (++i < Game.Agents.Count)
+                @for (int j = i; j <= i + 1; j++)
                 {
-                    Agent agent2 = Game.Agents.Allies[i];
-                    disabled = !agent2.IsActing && NumSelected >= GameService.MAX_AGENT_SELECTIONS;
-
-                    <div class="col-xs-6 col-sm-5 col-md-3 col-lg-2">
-                        <AgentSelectButton Agent="agent2"
-                                           OnChangeCallback="e => OnAgentCheckboxChanged(e, agent2)"
-                                           Disabled="disabled" />
+                    <div class="col-6 col-sm-5 col-md-3 col-lg-2">
+                        @if (j < Game.Agents.Allies.Count)
+                        {
+                            Agent agent = Game.Agents.Allies[j];
+                            bool disabled = !agent.IsActing && NumSelected >= GameService.MAX_AGENT_SELECTIONS;
+                            <div class="btn-group-toggle" data-toggle="buttons">
+                                <label class="btn btn-block btn-outline-dark @(agent.IsActing ? "active" : disabled ? "disabled" : "")">
+                                    <input type="checkbox"
+                                           checked="@agent.IsActing"
+                                           disabled="@disabled"
+                                           @onchange="e => OnAgentCheckboxChanged(e, agent)"
+                                           @onchange:preventDefault
+                                           autocomplete="off" />
+                                    @agent.Name
+                                </label>
+                            </div>
+                        }
                     </div>
                 }
             </div>

@@ -84,6 +84,7 @@ namespace Subterfuge
             AgentType.Swallow => Gender switch
             {
                 Gender.Male => "Raven",
+                Gender.Female => "Swallow",
                 _ => "Swallow"
             },
             _ => AgentType.ToString()
@@ -91,10 +92,10 @@ namespace Subterfuge
 
         public Agent(AgentType type)
         {
-            Codename = GameService.GenerateUniqueCodename();
             AgentType = type;
+            Codename = GameService.GenerateUniqueCodename();
             Gender = (Gender)GameService.Random.Next(2);
-            Killer = null;
+            IsAlive = true;
             Reset();
         }
 

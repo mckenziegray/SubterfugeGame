@@ -1,36 +1,54 @@
-﻿@page "/selecttarget/{agentType:int}"
+﻿@page "/selecttarget/{agentType}"
 @inject GameService Game
 
-<div class="row">
-    <div class="col center-horizontal">
+<div class="row justify-content-center">
+    <div class="col center-contents-horizontal">
         <h2>Day @Game.Day</h2>
         <p>Select the @Agent.Name's target.</p>
 
-        @foreach (Agent agent in Game.Agents.ShuffledList)
+        @for (int i = 0; i < Game.Agents.ShuffledList.Count; i += 2)
         {
-            <button @onclick="() => SetTarget(agent)" class="btn btn-dark">@agent.Codename</button>
+            <div class="row justify-content-center">
+                @for (int j = i; j <= i + 1; j++)
+                {
+                    <div class="col-6 col-sm-5 col-md-3 col-lg-2">
+                        @if (j < Game.Agents.ShuffledList.Count)
+                        {
+                            Agent agent = Game.Agents.ShuffledList[j];
+                            <button @onclick="() => SetTarget(agent)" class="btn btn-block btn-dark" disabled="@(!agent.IsAlive)">@agent.Codename</button>
+                        }
+                    </div>
+                }
+            </div>
         }
 
-        <button class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+        <div class="row justify-content-center">
+            <div class="col">
+                <button class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+            </div>
+        </div>
     </div>
 </div>
 
 @code {
     [Parameter]
-    public int AgentType { get; set; } // Blazor route params don't yet support enums
+    public string AgentType { get; set; } // Blazor route params don't yet support enums
 
     protected Agent Agent { get; set; }
 
     protected override void OnParametersSet()
     {
-        Agent = Game.Agents[(AgentType)AgentType];
+        Agent = Game.Agents[Enum.Parse<AgentType>(AgentType)];
     }
 
-    protected void SetTarget(Agent agent)
+    protected void SetTarget(Agent target)
     {
-        Agent.IsActing = true;
-        Agent.Target = agent;
-        Nav.NavigateTo("/selectagents");
+        if (target.IsAlive)
+        {
+            Agent.IsActing = true;
+            Agent.Target = target;
+            Nav.NavigateTo("/selectagents");
+        }
     }
 
     protected void Cancel()
