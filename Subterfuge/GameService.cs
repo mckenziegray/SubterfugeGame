@@ -24,7 +24,7 @@ namespace Subterfuge
         {
             foreach (Agent agent in Agents.OrderedList)
             {
-                if (agent.IsActing)
+                if (agent.IsAlive && agent.IsActing)
                 {
                     agent.Act();
                 }
@@ -39,7 +39,7 @@ namespace Subterfuge
             {
                 if (agent.IsActing)
                 {
-                    reports.Add($"{agent.AgentType}'s report: {agent.GetReport()}");
+                    reports.Add(agent.GetReport());
                 }
             }
 

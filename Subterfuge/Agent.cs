@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Subterfuge.Enums;
 using Subterfuge.Exceptions;
 
@@ -46,6 +47,10 @@ namespace Subterfuge
         /// </summary>
         public Agent Target { get; set; }
         /// <summary>
+        /// The codenames of the units that visited this agent today
+        /// </summary>
+        public HashSet<string> Visitors { get; set; }
+        /// <summary>
         /// The agent blocking this agent
         /// </summary>
         protected Agent Blocker { get; set; }
@@ -67,8 +72,8 @@ namespace Subterfuge
             AgentType.Saboteur      => true,
             AgentType.Convoy        => true,
             AgentType.Medic         => true,
-            AgentType.Assassin      => true,
             AgentType.Android       => true,
+            AgentType.Assassin      => true,
             AgentType.Drudge        => true,
             AgentType.Mastermind    => true,
             AgentType.Fabricator    => true,
@@ -90,6 +95,8 @@ namespace Subterfuge
             _ => AgentType.ToString()
         };
 
+        protected bool RedirectKill { get; set; }
+
         public Agent(AgentType type)
         {
             AgentType = type;
@@ -101,18 +108,48 @@ namespace Subterfuge
 
         public void Kill(Agent killer)
         {
-            IsAlive = false;
-            Killer = killer;
+            Visit(killer);
+
+            if (RedirectKill && IsProtected)
+            {
+                Protector.Kill(killer);
+                RedirectKill = false;
+            }
+            else
+            {
+                IsAlive = false;
+                Killer = killer;
+            }
         }
 
         public void Block(Agent blocker)
         {
+            Visit(blocker);
+
             Blocker = blocker;
         }
 
-        public void Protect(Agent protector)
+        /// <summary>
+        /// Protect this unit from death.
+        /// </summary>
+        /// <param name="protector">The unit providing protection.</param>
+        /// <param name="redirect">Whether the protector should die if an attempt is made to kill this unit.</param>
+        public void Protect(Agent protector, bool redirect = false)
         {
+            Visit(protector);
+
             Protector = protector;
+            RedirectKill = redirect;
+        }
+
+        /// <summary>
+        /// Visit this unit. This action is performed automatically by most other actions.
+        /// </summary>
+        /// <param name="visitor">The unit visiting this agent.</param>
+        public void Visit(Agent visitor)
+        {
+            // Visitors is a HashSet, which means duplicates will automatically be filtered out
+            Visitors.Add(visitor.Codename);
         }
 
         public void Act()
@@ -120,47 +157,101 @@ namespace Subterfuge
             if (RequiresTarget && Target is null)
                 throw new NoTargetException(AgentType);
 
+            // If this unit is role-blocked, they are prevented from acting
+            if (IsBlocked)
+                return;
+
+            // If this unit requires a target and their target is dead, there's nothing to do
+            if (RequiresTarget && !Target.IsAlive)
+                return;
+
+            // Act according to role
             switch (AgentType)
             {
-                case AgentType.Assassin:
-                    if (Target.IsAlive && !IsBlocked && !Target.IsProtected)
-                    {
-                        Target.Kill(this);
-                    }
-                    break;
-                case AgentType.Medic:
-                    if (Target.IsAlive && !IsBlocked)
-                    {
-                        Target.Protect(this);
-                    }
-                    break;
+                case AgentType.Marshal:
                 case AgentType.Swallow:
-                    if (Target.IsAlive && !IsBlocked)
+                    if (Target.AgentType == AgentType.Android)
+                    {
+                        // The Android is immune to being role-blocked and will instead try to kill the unit targeting it
+                        Target.Target = this;
+                        Target.IsActing = true;
+                    }
+                    else
                     {
                         Target.Block(this);
                         Target.Protect(this);
                     }
                     break;
+                case AgentType.Saboteur:
+                    Target.Block(this);
+                    break;
+                case AgentType.Convoy:
+                    Target.Protect(this, true);
+                    break;
+                case AgentType.Medic:
+                    Target.Protect(this, false);
+                    break;
+                case AgentType.Android:
+                case AgentType.Assassin:
+                case AgentType.Drudge:
+                case AgentType.Mastermind:
+                    if (!Target.IsProtected)
+                        Target.Kill(this);
+                    break;
+                case AgentType.Fabricator:
+                    // TODO
+                    break;
+                case AgentType.Cutout:
+                    Target.Visit(this);
+                    break;
                 case AgentType.Interrogator:
-                    throw new NotImplementedException();
+                    // TODO
+                    break;
                 case AgentType.Hacker:
-                    throw new NotImplementedException();
+                    // TODO
+                    break;
+                case AgentType.Sentry:
+                    // Technically nothing to do here
+                    break;
+                case AgentType.Intern:
+                    // Does nothing
+                    break;
                 default:
-                    throw new ArgumentException($"{nameof(Enums.AgentType)} {AgentType} not recognized.");
+                    throw new NotImplementedException();
             }
         }
 
         public string GetReport()
         {
+            /*
+             * Unit         Self-targets            Self-identifies
+             * Marshal      No                      Yes
+             * Swallow      No                      Yes
+             * Convoy       Yes                     No
+             * Medic        No                      No
+             * Assassin     No                      No
+             * Interrogator No                      Yes
+             * Hacker       No                      Yes
+             * Sentry       Yes                     No
+             */
+
             string report;
 
             switch (AgentType)
             {
-                case AgentType.Assassin:
-                    if (Target.Killer == this)
-                        report = $"Orders received. Target {Target.Codename} neutralized.";
+                case AgentType.Marshal:
+
+                    break;
+                case AgentType.Swallow:
+                    report = "I received your orders to carry out the \"special\" operation.";
+                    if (!Target.IsAlive || IsBlocked)
+                        report += " I'm sorry to say that I was unsuccessful.";
                     else
-                        report = "Mission compromised. Standing by for further orders.";
+                        report += $" The mission was a success. {Target.Codename} was tied up all night.";
+                    break;
+                case AgentType.Saboteur:
+                    break;
+                case AgentType.Convoy:
                     break;
                 case AgentType.Medic:
                     report = $"I got your orders to look after {Target.Codename}.";
@@ -177,12 +268,21 @@ namespace Subterfuge
                         report += " Thankfully, my services were not required.";
                     }
                     break;
-                case AgentType.Swallow:
-                    report = "I received your orders to carry out the \"special\" operation.";
-                    if (!Target.IsAlive || IsBlocked)
-                        report += " I'm sorry to say that I was unsuccessful.";
+                case AgentType.Android:
+                    break;
+                case AgentType.Assassin:
+                    if (Target.Killer == this)
+                        report = $"Orders received. Target {Target.Codename} neutralized.";
                     else
-                        report += $" The mission was a success. {Target.Codename} was tied up all night.";
+                        report = $"Mission compromised. Target {Target.Codename} still active. Standing by for further orders.";
+                    break;
+                case AgentType.Drudge:
+                    break;
+                case AgentType.Mastermind:
+                    break;
+                case AgentType.Fabricator:
+                    break;
+                case AgentType.Cutout:
                     break;
                 case AgentType.Interrogator:
                     if (!Target.IsAlive || IsBlocked)
@@ -207,8 +307,12 @@ namespace Subterfuge
                         // TODO: Get information
                     }
                     break;
+                case AgentType.Sentry:
+                    break;
+                case AgentType.Intern:
+                    break;
                 default:
-                    throw new ArgumentException($"{nameof(Enums.AgentType)} {AgentType} not recognized.");
+                    throw new NotImplementedException();
             }
 
             return report;
@@ -217,10 +321,14 @@ namespace Subterfuge
         public void Reset()
         {
             IsActing = false;
+            WasAttacked = false;
+            RedirectKill = false;
+
             Target = null;
             Blocker = null;
             Protector = null;
-            WasAttacked = false;
+
+            Visitors.Clear();
         }
     }
 }

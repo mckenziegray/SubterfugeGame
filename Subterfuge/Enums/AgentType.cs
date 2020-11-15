@@ -22,7 +22,7 @@
 
 namespace Subterfuge.Enums
 {
-    // NOTE: The order of this enum is the order the agents will act in
+    // NOTE: The order of this enum is the order in which the agents will act
     public enum AgentType
     {
         Marshal,
@@ -30,8 +30,8 @@ namespace Subterfuge.Enums
         Saboteur,
         Convoy,
         Medic,
-        Assassin,
         Android,
+        Assassin,
         Drudge,
         Mastermind,
         Fabricator,
