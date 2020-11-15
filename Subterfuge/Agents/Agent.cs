@@ -37,6 +37,7 @@ namespace Subterfuge.Agents
         public Agent Killer { get; protected set; }
         public bool WasAttacked { get; protected set; }
         public bool WasKilled => WasAttacked && !IsAlive;
+        public bool WasFramed { get; protected set; }
         public bool IsBlocked => Blocker?.IsAlive ?? false;
         public bool IsProtected => Protector != null && Protector.IsAlive && !Protector.IsBlocked;
         public abstract bool RequiresTarget { get; }
@@ -107,6 +108,13 @@ namespace Subterfuge.Agents
             RedirectKill = redirect;
         }
 
+        public void Frame(Agent framer)
+        {
+            Visit(framer);
+
+            WasFramed = true;
+        }
+
         /// <summary>
         /// Visit this unit. This action is performed automatically by most other actions.
         /// </summary>
@@ -131,23 +139,23 @@ namespace Subterfuge.Agents
         /// <remarks>
         /// What each type of agent does:
         ///      Allied units
-        ///          Assassin:       Kills one target.
+        ///          Assassin:       Kills one target. Cannot kill the Mastermind, Android, or Sleeper.
         ///          Convoy:         Protects one target from death. Sacrifices self if the target would have died.
-        ///          Hacker:         Attempts to identify one target. Always able to identify the Android, but cannot identify the Mastermind.
-        ///          Interrogator:   Attempts to identify one target.
+        ///          Hacker:         Attepmpts to determine if a target is innocent or not. Sees Mastermind as innocent. Always identifies the Android specifically.
+        ///          Interrogator:   Attempts to identify one target. usually 
         ///          Marshall:       Role-blocks one target.
         ///          Medic:          Protects one target from death unless killed first.
         ///          Sentry:         Surveils one target and reports who, if anyone, they visited.
         ///          Swallow:        Role-blocks one target.
         ///      Neutral units
         ///          Cut-out:        Harmlessly visits one agent per day.
-        ///          Intern:         Does nothing. Kills one agent at random if executed.
+        ///          Sleeper:        Does nothing day-to-day. Kills one Allied agent at random if executed.
         ///      Enemy units
-        ///          Android:        Kills randomly (but will not kill the Mastermind). Automatically tries to kill the Swallow or Marshal if targeted by them.
-        ///          Drudge:         Kills one Allied target every day.
-        ///          Fabricator:     Plants false information on one Allied or Neutral target every day. This is more likely to fool the hacker than the interrogator. Will not target the target of the Mastermind or Drudge.
-        ///          Mastermind:     Does nothing if the Drudge is alive. Kills one Allied target every day if the Drudge is dead.
-        ///          Saboteur:       Role-blocks one target every day.
+        ///          Android:        Kills a random target (but not the Mastermind) most days. Automatically tries to kill the Swallow or Marshal if targeted by them.
+        ///          Drudge:         Kills one Allied target every day. Does not kill the Sleeper.
+        ///          Fabricator:     Plants false information on one Allied or Neutral target every day, which will fool the hacker into thinking that agent is and Enemy. Will not target the target of the Mastermind or Drudge.
+        ///          Mastermind:     Does nothing if the Drudge is alive. Kills a target most days if the Drudge is dead. Also, if the Drudge is dead, will try to kill the Swallow or Marshal if targeted by them. Does not kill the Sleeper.
+        ///          Saboteur:       Role-blocks one Neutral or Allied target every day.
         /// </remarks>
         protected abstract void Act();
 

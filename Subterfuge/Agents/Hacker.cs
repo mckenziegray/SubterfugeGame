@@ -1,5 +1,4 @@
-﻿using System;
-using Subterfuge.Enums;
+﻿using Subterfuge.Enums;
 
 namespace Subterfuge.Agents
 {
@@ -12,8 +11,7 @@ namespace Subterfuge.Agents
 
         protected override void Act()
         {
-            // TODO
-            throw new NotImplementedException();
+            // Does nothing
         }
 
         public override string GetReport()
@@ -26,7 +24,20 @@ namespace Subterfuge.Agents
             else
             {
                 report += $" I did some digging into {Target.Codename}.";
-                // TODO: Get information
+
+                /*
+                 * Scenarios:
+                 * 1. Guaranteed identification (this will always happen for Android)
+                 * 2. Looks like a bad guy (this will always happen for the Fabricator's target)
+                 * 3. Looks like a good guy (this will always happen for Mastermind)
+                 */
+
+                if (Target is Android)
+                    report += $" After navigating through layers of encryption, I found nothing but learning models and machine code. No doubt, it's the {Target.Name}.";
+                else if (Target.WasFramed || (Target.Allegiance == Allegiance.Enemy && Target is not Mastermind))
+                    report += $" On their hard drive, I found strategems, coded communiqués, agent dossiers... really shady stuff. Make of that what you will.";
+                else
+                    report += $" They seem clean. I wasn't able to find anything suspicious.";
             }
 
             return report;

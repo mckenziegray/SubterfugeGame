@@ -3,12 +3,12 @@ using Subterfuge.Enums;
 
 namespace Subterfuge.Agents
 {
-    public class Intern : Agent
+    public class Sleeper : Agent
     {
         public override Allegiance Allegiance => Allegiance.Neutral;
         public override bool RequiresTarget => true;
 
-        public Intern() : base() { }
+        public Sleeper() : base() { }
 
         protected override void Act()
         {

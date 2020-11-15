@@ -38,7 +38,7 @@ namespace Subterfuge.Agents
                 new Interrogator(),
                 new Hacker(),
                 new Sentry(),
-                new Intern()
+                new Sleeper()
             };
 
             foreach (Agent agent in OrderedList)
