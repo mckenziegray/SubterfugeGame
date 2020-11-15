@@ -7,7 +7,7 @@ namespace Subterfuge
 {
     public class GameService
     {
-        public const int MAX_AGENT_SELECTIONS = 2;
+        public const int MAX_AGENT_SELECTIONS = 3;
 
         public static Random Random { get; private set; } = new Random();
         public int Day { get; protected set; }

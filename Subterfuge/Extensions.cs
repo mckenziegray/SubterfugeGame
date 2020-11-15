@@ -21,5 +21,15 @@ namespace Subterfuge
                 _ => "They"
             };
         }
+
+        public static string ToObjectivePronoun(this Gender source)
+        {
+            return source switch
+            {
+                Gender.Female => "Her",
+                Gender.Male => "Him",
+                _ => "Them"
+            };
+        }
     }
 }
