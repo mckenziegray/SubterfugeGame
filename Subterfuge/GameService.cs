@@ -31,21 +31,6 @@ namespace Subterfuge
             }
         }
 
-        public List<string> GetReports()
-        {
-            List<string> reports = new List<string>();
-
-            foreach (Agent agent in Agents.OrderedList)
-            {
-                if (agent.IsActing)
-                {
-                    reports.Add(agent.GetReport());
-                }
-            }
-
-            return reports;
-        }
-
         public void EndRound()
         {
             ++Day;

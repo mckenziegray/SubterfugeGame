@@ -1,26 +1,43 @@
 ﻿@page "/results"
 @inject GameService Game
-@inject NavigationManager Nav
 
-<p>Day @Game.Day</p>
 
-@foreach (string report in Reports)
-{
-    <p>report</p>
-}
+<div class="row justify-content-center">
+    <div class="col center-contents-horizontal">
+        <h2>Day @Game.Day</h2>
+        <br />
 
-<button @onclick="Submit">Next Day</button>
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-12 col-md-8 col-lg-6">
+                <h3>Reports</h3>
+                <div class="reports row">
+                    <div class="col-12">
+                        @foreach (Agent agent in Game.Agents.Allies.Where(a => a.IsAlive && a.IsActing))
+                        {
+                            <h4>@agent.Name's Report</h4>
+                            <p>@agent.GetReport()</p>
+                        }
+                    </div>
+                </div>
+                <h3>Casualties</h3>
+                <div class="row">
+                    <div class="col-12">
+                        @foreach (Agent agent in Game.Agents.ShuffledList.Where(a => a.WasKilled))
+                        {
+                            <p>Agent @agent.Codename was killed by the @agent.Killer.Name. @agent.Gender.ToCommonPronoun() was the @agent.Name.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+
+        <button class="btn btn-primary" @onclick="Submit">Next Day</button>
+    </div>
+</div>
+
 
 @code {
-    protected List<string> Reports { get; set; }
-
-    protected override void OnInitialized()
-    {
-        Reports = Game.GetReports();
-
-        base.OnInitialized();
-    }
-
     private void Submit()
     {
         Game.EndRound();

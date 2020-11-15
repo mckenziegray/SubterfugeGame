@@ -49,20 +49,21 @@ namespace Subterfuge
         /// <summary>
         /// The codenames of the units that visited this agent today
         /// </summary>
-        public HashSet<string> Visitors { get; set; }
+        public HashSet<string> Visitors { get; set; } = new();
         /// <summary>
         /// The agent blocking this agent
         /// </summary>
-        protected Agent Blocker { get; set; }
+        public Agent Blocker { get; protected set; }
         /// <summary>
         /// The agent protecting this agent
         /// </summary>
-        protected Agent Protector { get; set; }
+        public Agent Protector { get; protected set; }
         /// <summary>
         /// The agent who killed this agent
         /// </summary>
-        protected Agent Killer { get; set; }
+        public Agent Killer { get; protected set; }
         public bool WasAttacked { get; protected set; }
+        public bool WasKilled => WasAttacked && !IsAlive;
         public bool IsBlocked => Blocker?.IsAlive ?? false;
         public bool IsProtected => Protector != null && Protector.IsAlive && !Protector.IsBlocked;
         public bool RequiresTarget => AgentType switch
@@ -106,20 +107,29 @@ namespace Subterfuge
             Reset();
         }
 
-        public void Kill(Agent killer)
+        public void Attack(Agent attacker)
         {
-            Visit(killer);
+            Visit(attacker);
+            WasAttacked = true;
 
-            if (RedirectKill && IsProtected)
+            if (IsProtected)
             {
-                Protector.Kill(killer);
-                RedirectKill = false;
+                if (RedirectKill)
+                {
+                    Protector.Kill(attacker);
+                    RedirectKill = false;
+                }
             }
             else
             {
-                IsAlive = false;
-                Killer = killer;
+                Kill(attacker);
             }
+        }
+
+        protected void Kill(Agent killer)
+        {
+            IsAlive = false;
+            Killer = killer;
         }
 
         public void Block(Agent blocker)
@@ -161,10 +171,6 @@ namespace Subterfuge
             if (IsBlocked)
                 return;
 
-            // If this unit requires a target and their target is dead, there's nothing to do
-            if (RequiresTarget && !Target.IsAlive)
-                return;
-
             // Act according to role
             switch (AgentType)
             {
@@ -176,33 +182,37 @@ namespace Subterfuge
                         Target.Target = this;
                         Target.IsActing = true;
                     }
-                    else
+                    else if (Target.IsAlive && Target != this)
                     {
                         Target.Block(this);
                         Target.Protect(this);
                     }
                     break;
                 case AgentType.Saboteur:
-                    Target.Block(this);
+                    if (Target.IsAlive && Target != this)
+                        Target.Block(this);
                     break;
                 case AgentType.Convoy:
-                    Target.Protect(this, true);
+                    if (Target.IsAlive)
+                        Target.Protect(this, true);
                     break;
                 case AgentType.Medic:
-                    Target.Protect(this, false);
+                    if (Target.IsAlive && Target != this)
+                        Target.Protect(this, false);
                     break;
                 case AgentType.Android:
                 case AgentType.Assassin:
                 case AgentType.Drudge:
                 case AgentType.Mastermind:
-                    if (!Target.IsProtected)
-                        Target.Kill(this);
+                    if (Target.IsAlive && Target != this)
+                        Target.Attack(this);
                     break;
                 case AgentType.Fabricator:
                     // TODO
                     break;
                 case AgentType.Cutout:
-                    Target.Visit(this);
+                    if (Target != this)
+                        Target.Visit(this);
                     break;
                 case AgentType.Interrogator:
                     // TODO
@@ -210,11 +220,8 @@ namespace Subterfuge
                 case AgentType.Hacker:
                     // TODO
                     break;
-                case AgentType.Sentry:
-                    // Technically nothing to do here
-                    break;
-                case AgentType.Intern:
-                    // Does nothing
+                case AgentType.Sentry: // Technically nothing to do here
+                case AgentType.Intern: // Does nothing
                     break;
                 default:
                     throw new NotImplementedException();
@@ -224,15 +231,15 @@ namespace Subterfuge
         public string GetReport()
         {
             /*
-             * Unit         Self-targets            Self-identifies
-             * Marshal      No                      Yes
-             * Swallow      No                      Yes
-             * Convoy       Yes                     No
-             * Medic        No                      No
-             * Assassin     No                      No
-             * Interrogator No                      Yes
-             * Hacker       No                      Yes
-             * Sentry       Yes                     No
+             * Unit         Self-targets    Self-identifies
+             * Marshal      No              Yes
+             * Swallow      No              Yes
+             * Convoy       Yes             No
+             * Medic        No              No
+             * Assassin     No              No
+             * Interrogator No              Yes
+             * Hacker       No              Yes
+             * Sentry       Yes             No
              */
 
             string report;
@@ -240,58 +247,52 @@ namespace Subterfuge
             switch (AgentType)
             {
                 case AgentType.Marshal:
-
+                    if (Target == this)
+                        report = $"Sorry, boss; {Target.Codename} is me. I could lock myself up, but it wouldn't do much good since I have the key.";
+                    else if (Target.Blocker == this)
+                        report = $"As requested, {Target.Codename} was detained all night.";
+                    else
+                        report = $"Regrettably, I was unable to hold {Target.Codename} overnight.";
                     break;
                 case AgentType.Swallow:
-                    report = "I received your orders to carry out the \"special\" operation.";
-                    if (!Target.IsAlive || IsBlocked)
-                        report += " I'm sorry to say that I was unsuccessful.";
+                    report = $"I received your orders to carry out the \"special\" operation with {Target.Codename}.";
+                    if (Target == this)
+                        report += " Actually, that's me. But don't worry, I kept myself entertained.";
+                    else if (Target.Blocker == this)
+                        report += $" The mission was a success. {Target.Gender.ToCommonPronoun()} was tied up all night.";
                     else
-                        report += $" The mission was a success. {Target.Codename} was tied up all night.";
-                    break;
-                case AgentType.Saboteur:
+                        report += " I'm sorry to say that I was unsuccessful.";
                     break;
                 case AgentType.Convoy:
+                    report = $"I received your orders to protect {Target.Codename}.";
+                    if (IsBlocked)
+                        report += " However, I was preocupied. My apologies.";
+                    else
+                        report += $" The night was uneventful, and {Target.Gender.ToCommonPronoun().ToLower()} was not harmed.";
                     break;
                 case AgentType.Medic:
                     report = $"I got your orders to look after {Target.Codename}.";
                     if (!Target.IsAlive || IsBlocked)
-                    {
-                        report += " Unfortunately, I was unable to perform my duties. Apologies.";
-                    }
+                        report += " Unfortunately, I was unable to perform my duties. Sorry.";
                     else if (Target.WasAttacked)
-                    {
-                        report += " The target was attacked but is alive and recovering.";
-                    }
+                        report += $" {Target.Gender.ToCommonPronoun()} was attacked but is alive and recovering.";
                     else
-                    {
                         report += " Thankfully, my services were not required.";
-                    }
-                    break;
-                case AgentType.Android:
                     break;
                 case AgentType.Assassin:
                     if (Target.Killer == this)
-                        report = $"Orders received. Target {Target.Codename} neutralized.";
+                        report = $"Orders received. Target neutralized.";
                     else
-                        report = $"Mission compromised. Target {Target.Codename} still active. Standing by for further orders.";
-                    break;
-                case AgentType.Drudge:
-                    break;
-                case AgentType.Mastermind:
-                    break;
-                case AgentType.Fabricator:
-                    break;
-                case AgentType.Cutout:
+                        report = $"Mission compromised. Standing by for further orders.";
                     break;
                 case AgentType.Interrogator:
                     if (!Target.IsAlive || IsBlocked)
                     {
-                        report = "Due to unforeseen circumstances, I was unable to question the target. Don't worry, we'll get 'em next time.";
+                        report = $"Due to unforeseen circumstances, I was unable to question {Target.Codename}. Don't worry, we'll get 'em next time.";
                     }
                     else
                     {
-                        report = $"Per your orders, {Target.Codename} was detained and interrogated.";
+                        report = $"Per your orders, {Target.Codename} was interrogated.";
                         // TODO: Get information
                     }
                     break;
@@ -308,8 +309,13 @@ namespace Subterfuge
                     }
                     break;
                 case AgentType.Sentry:
-                    break;
-                case AgentType.Intern:
+                    report = $"I got your request to keep an eye on {Target.Codename}'s quarters for the night";
+                    if (IsBlocked)
+                        report += $" but something else came up. Sorry.";
+                    else if (Target.Visitors.Count == 0)
+                        report += $". {Target.Gender.ToCommonPronoun()} had no visitors.";
+                    else
+                        report += $". {Target.Gender.ToCommonPronoun()} had {Target.Visitors.Count} {(Target.Visitors.Count == 1 ? "visitor" : "visitors")}: {string.Join(", ", Target.Visitors)}";
                     break;
                 default:
                     throw new NotImplementedException();

@@ -15,7 +15,7 @@
                         @if (j < Game.Agents.Allies.Count)
                         {
                             Agent agent = Game.Agents.Allies[j];
-                            bool disabled = !agent.IsActing && NumSelected >= GameService.MAX_AGENT_SELECTIONS;
+                            bool disabled = !agent.IsAlive || (!agent.IsActing && NumSelected >= GameService.MAX_AGENT_SELECTIONS);
                             <div class="btn-group-toggle" data-toggle="buttons">
                                 <label class="btn btn-block btn-outline-dark @(agent.IsActing ? "active" : disabled ? "disabled" : "")">
                                     <input type="checkbox"
@@ -35,7 +35,7 @@
 
         <div class="row justify-content-center">
             <div class="col">
-                <button class="btn btn-info" @onclick="Submit">Confirm</button>
+                <button class="btn btn-primary" @onclick="Submit">Confirm</button>
             </div>
         </div>
     </div>
@@ -51,7 +51,7 @@
 
         if (isChecked)
         {
-            if (NumSelected < GameService.MAX_AGENT_SELECTIONS)
+            if (agent.IsAlive && NumSelected < GameService.MAX_AGENT_SELECTIONS)
             {
                 if (agent.RequiresTarget)
                     Nav.NavigateTo($"/selecttarget/{(int)agent.AgentType}");
