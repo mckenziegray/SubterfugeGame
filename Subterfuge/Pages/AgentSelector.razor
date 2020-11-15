@@ -54,7 +54,7 @@
             if (agent.IsAlive && NumSelected < GameService.MAX_AGENT_SELECTIONS)
             {
                 if (agent.RequiresTarget)
-                    Nav.NavigateTo($"/selecttarget/{(int)agent.AgentType}");
+                    Nav.NavigateTo($"/selecttarget/{agent.GetType()}");
                 else
                     agent.IsActing = true;
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Subterfuge.Agents;
 using Subterfuge.Enums;
 
 namespace Subterfuge

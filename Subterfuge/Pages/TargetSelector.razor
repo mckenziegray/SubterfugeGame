@@ -32,13 +32,13 @@
 
 @code {
     [Parameter]
-    public string AgentType { get; set; } // Blazor route params don't yet support enums
+    public string AgentType { get; set; }
 
     protected Agent Agent { get; set; }
 
     protected override void OnParametersSet()
     {
-        Agent = Game.Agents[Enum.Parse<AgentType>(AgentType)];
+        Agent = Game.Agents[AgentType];
     }
 
     protected void SetTarget(Agent target)

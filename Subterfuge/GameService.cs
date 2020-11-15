@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Subterfuge.Agents;
 using Subterfuge.Enums;
 
 namespace Subterfuge
@@ -12,7 +13,7 @@ namespace Subterfuge
         public int Day { get; protected set; }
         public AgentList Agents { get; set; }
 
-        private static readonly List<string> _generatedCodenames = new List<string>(Enum.GetValues(typeof(AgentType)).Length);
+        private static readonly List<string> _generatedCodenames = new List<string>();
 
         public GameService()
         {
@@ -24,10 +25,7 @@ namespace Subterfuge
         {
             foreach (Agent agent in Agents.OrderedList)
             {
-                if (agent.IsAlive && agent.IsActing)
-                {
-                    agent.Act();
-                }
+                agent.ActIfAble();
             }
         }
 
