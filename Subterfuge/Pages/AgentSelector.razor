@@ -35,7 +35,7 @@
 
         <div class="row justify-content-center">
             <div class="col">
-                <button class="btn btn-primary" @onclick="Submit">Confirm</button>
+                <button class="btn btn-primary" @onclick="Continue">Confirm</button>
             </div>
         </div>
     </div>
@@ -65,7 +65,7 @@
         }
     }
 
-    protected void Submit()
+    protected void Continue()
     {
         Game.PlayRound();
         Nav.NavigateTo("/results");

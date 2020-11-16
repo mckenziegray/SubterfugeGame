@@ -81,12 +81,6 @@ namespace Subterfuge.Agents
             }
         }
 
-        protected void Kill(Agent killer)
-        {
-            IsAlive = false;
-            Killer = killer;
-        }
-
         public void Block(Agent blocker)
         {
             Visit(blocker);
@@ -122,6 +116,11 @@ namespace Subterfuge.Agents
         {
             // Visitors is a HashSet, which means duplicates will automatically be filtered out
             Visitors.Add(visitor.Codename);
+        }
+
+        public void Execute()
+        {
+            Kill(null);
         }
 
         public void ActIfAble()
@@ -188,6 +187,12 @@ namespace Subterfuge.Agents
             Protector = null;
 
             Visitors.Clear();
+        }
+
+        protected void Kill(Agent killer)
+        {
+            IsAlive = false;
+            Killer = killer;
         }
     }
 }

@@ -1,0 +1,45 @@
+﻿<div class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-hidden="true" @attributes="Attributes">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @if (TitleText is not null)
+            {
+                <div class="modal-header">
+                    <h5 class="modal-title">@TitleText</h5>
+                </div>
+            }
+            <div class="modal-body">
+                @ChildContent
+            </div>
+            <div class="modal-footer">
+                @if (DismissButtonText is not null)
+                {
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@DismissButtonText</button>
+                }
+                @if (ConfirmButtonText is not null)
+                {
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="@ConfirmButtonClickedCallback">@ConfirmButtonText</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> Attributes { get; set; }
+
+    [Parameter]
+    public string TitleText { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string DismissButtonText { get; set; }
+
+    [Parameter]
+    public string ConfirmButtonText { get; set; }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> ConfirmButtonClickedCallback { get; set; }
+}

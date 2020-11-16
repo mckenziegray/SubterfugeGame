@@ -17,6 +17,7 @@ namespace Subterfuge.Agents
 
         protected override void Act()
         {
+
             if (Target is Android || (Target is Mastermind && Target.IsActing))
             {
                 // The Android is immune to being role-blocked and will instead try to kill the unit targeting it

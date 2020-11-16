@@ -1,5 +1,6 @@
 ﻿@page "/results"
 @inject GameService Game
+@inherits RoundEnder
 
 <div class="row justify-content-center">
     <div class="col center-contents-horizontal">
@@ -7,7 +8,7 @@
         <br />
 
         <div class="row justify-content-center">
-            <div class="col-12 col-sm-12 col-md-8 col-lg-6">
+            <div class="col-12 col-sm-12 col-md-9 col-lg-6">
                 <h3>Reports</h3>
                 <div class="reports row">
                     <div class="col-12">
@@ -39,29 +40,13 @@
         </div>
         <br />
 
-        <button class="btn btn-primary" @onclick="Submit">Next Day</button>
+        <button class="btn btn-primary" @onclick="Continue">Continue</button>
     </div>
 </div>
 
-
 @code {
-    private void Submit()
+    protected void Continue()
     {
-        if (!Game.Agents[nameof(Android)].IsAlive && !Game.Agents[nameof(Drudge)].IsAlive && !Game.Agents[nameof(Mastermind)].IsAlive)
-        {
-            // Win
-            Nav.NavigateTo("/gameover/true");
-        }
-        else if (!Game.Agents.OrderedList.Any(a => a.Allegiance == Allegiance.Ally && a.IsAlive))
-        {
-            // Lose
-            Nav.NavigateTo("/gameover/true");
-        }
-        else
-        {
-            // Keep playing
-            Game.EndRound();
-            Nav.NavigateTo("/selectagents");
-        }
+        Nav.NavigateTo("/execute");
     }
 }

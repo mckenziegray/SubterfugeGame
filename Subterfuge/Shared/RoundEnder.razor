@@ -1,0 +1,23 @@
+﻿@inject GameService Game
+
+@code {
+    protected void EndRound()
+    {
+        if (!Game.Agents[nameof(Android)].IsAlive && !Game.Agents[nameof(Drudge)].IsAlive && !Game.Agents[nameof(Mastermind)].IsAlive)
+        {
+            // Win
+            Nav.NavigateTo("/gameover/true");
+        }
+        else if (!Game.Agents.OrderedList.Any(a => a.Allegiance == Allegiance.Ally && a.IsAlive))
+        {
+            // Lose
+            Nav.NavigateTo("/gameover/true");
+        }
+        else
+        {
+            // Keep playing
+            Game.EndRound();
+            Nav.NavigateTo("/selectagents");
+        }
+    }
+}

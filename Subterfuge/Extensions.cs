@@ -31,5 +31,25 @@ namespace Subterfuge
                 _ => "Them"
             };
         }
+
+        public static string ToPossessivePronoun(this Gender source)
+        {
+            return source switch
+            {
+                Gender.Female => "Her",
+                Gender.Male => "His",
+                _ => "Their"
+            };
+        }
+
+        public static string ToPossessivePluralPronoun(this Gender source)
+        {
+            return source switch
+            {
+                Gender.Female => "Hers",
+                Gender.Male => "His",
+                _ => "Theirs"
+            };
+        }
     }
 }
