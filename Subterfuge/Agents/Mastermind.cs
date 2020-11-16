@@ -27,14 +27,23 @@ namespace Subterfuge.Agents
 
         public override void SelectTarget(AgentList agents)
         {
-            if (!agents[nameof(Drudge)].IsAlive && GameService.Random.NextDouble() <= CHANCE_TO_ATTACK)
+            Agent drudge = agents[nameof(Drudge)];
+            if (!drudge.IsAlive && GameService.Random.NextDouble() <= CHANCE_TO_ATTACK)
             {
-                List<Agent> validTargets = agents.ShuffledList.Where(a => a != this && a.Allegiance == Allegiance.Ally && a.IsAlive).ToList();
-                
-                if (validTargets.Any())
+                if (drudge.Target?.IsAlive == true)
                 {
-                    Target = validTargets[GameService.Random.Next(validTargets.Count)];
+                    Target = drudge.Target;
                     IsActing = true;
+                }
+                else
+                {
+                    List<Agent> validTargets = agents.ShuffledList.Where(a => a != this && a.Allegiance == Allegiance.Ally && a.IsAlive).ToList();
+
+                    if (validTargets.Any())
+                    {
+                        Target = validTargets[GameService.Random.Next(validTargets.Count)];
+                        IsActing = true;
+                    }
                 }
             }
         }

@@ -153,9 +153,9 @@ namespace Subterfuge.Agents
         ///          Sleeper:       Does nothing day-to-day. Kills one Allied agent at random if executed.
         ///      Enemy units
         ///          Android:       Kills a random target (but not the Mastermind) most days. Automatically tries to kill the Swallow or Marshal if targeted by them.
-        ///          Drudge:        Kills one Allied target every day. Does not kill the Sleeper.
+        ///          Drudge:        Kills one Allied target every day.
         ///          Fabricator:    Plants false information on one Allied or Neutral target every day, which will fool the hacker into thinking that agent is and Enemy. Will not target the target of the Mastermind or Drudge.
-        ///          Mastermind:    Does nothing if the Drudge is alive. Kills a target most days if the Drudge is dead. Also, if the Drudge is dead, will try to kill the Swallow or Marshal if targeted by them. Does not kill the Sleeper.
+        ///          Mastermind:    Does nothing if the Drudge is alive. Kills an Allied target most days if the Drudge is dead. If the Drudge just died, will try to kill the Drudge's target. Also, if the Drudge is dead, will try to kill the Swallow or Marshal if targeted by them.
         ///          Saboteur:      Role-blocks one Neutral or Allied target every day.
         /// </remarks>
         protected abstract void Act();
