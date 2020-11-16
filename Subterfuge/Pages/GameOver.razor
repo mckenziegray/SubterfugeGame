@@ -1,0 +1,36 @@
+﻿@page "/gameover/{won:bool}"
+@inject GameService Game
+
+<div class="row justify-content-center">
+    <div class="col center-contents-horizontal">
+        @if (Won)
+        {
+            <h2>You win!</h2>
+            <p>The infiltrators have been eradicated.</p>
+        }
+        else
+        {
+            <h2>You lose.</h2>
+            <p>Your agents were defeated by the infiltrators.</p>
+        }
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-12 col-md-8 col-lg-6">
+                <!-- TODO: Game stats -->
+            </div>
+        </div>
+        <br />
+
+        <button class="btn btn-primary" @onclick="ReturnToMenu">Return to Menu</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public bool Won { get; set; }
+
+    protected void ReturnToMenu()
+    {
+        Game.Reset();
+        Nav.NavigateTo("/");
+    }
+}

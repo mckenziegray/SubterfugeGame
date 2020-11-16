@@ -7,6 +7,7 @@ namespace Subterfuge.Agents
 {
     public class AgentList
     {
+        // NOTE: This key must be the name of the class without any namespace. This can be obtained using nameof(AgentClass) or AgentInstance.GetType().Name
         public Agent this[string key] => Dictionary[key];
 
         public List<Agent> OrderedList { get; protected set; }
@@ -22,11 +23,12 @@ namespace Subterfuge.Agents
             ShuffledList = new();
             Dictionary = new();
 
+            // NOTE: This is the order in which agents will act
             OrderedList = new List<Agent>
             {
-                new Marshal(),
-                new Swallow(),
                 new Saboteur(),
+                new Swallow(),
+                new Marshal(),
                 new Convoy(),
                 new Medic(),
                 new Android(),
@@ -43,7 +45,7 @@ namespace Subterfuge.Agents
 
             foreach (Agent agent in OrderedList)
             {
-                Dictionary.Add(agent.GetType().ToString(), agent);
+                Dictionary.Add(agent.GetType().Name, agent);
             }
 
             ShuffledList = new List<Agent>(OrderedList);

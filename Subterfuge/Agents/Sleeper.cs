@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Subterfuge.Enums;
 
 namespace Subterfuge.Agents
@@ -18,6 +20,16 @@ namespace Subterfuge.Agents
         public override string GetReport()
         {
             throw new NotSupportedException();
+        }
+
+        public override void SelectTarget(AgentList agents)
+        {
+            List<Agent> validTargets = agents.ShuffledList.Where(a => a != this && a.Allegiance == Allegiance.Ally && a.IsAlive).ToList();
+            if (validTargets.Any())
+                Target = validTargets[GameService.Random.Next(validTargets.Count)];
+
+            // The sleeper is special - they pick a target but do nothing unless executed
+            IsActing = false;
         }
     }
 }

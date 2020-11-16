@@ -1,4 +1,5 @@
-﻿using Subterfuge.Enums;
+﻿using System;
+using Subterfuge.Enums;
 
 namespace Subterfuge.Agents
 {
@@ -24,6 +25,11 @@ namespace Subterfuge.Agents
                 report = $"Mission compromised. Standing by for further orders.";
 
             return report;
+        }
+
+        public override void SelectTarget(AgentList agents)
+        {
+            throw new NotSupportedException();
         }
     }
 }

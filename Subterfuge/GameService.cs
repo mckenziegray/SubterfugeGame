@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Subterfuge.Agents;
 using Subterfuge.Enums;
 
@@ -17,14 +18,16 @@ namespace Subterfuge
 
         public GameService()
         {
-            Day = 1;
-            Agents = new AgentList();
+            Reset();
         }
 
         public void PlayRound()
         {
             foreach (Agent agent in Agents.OrderedList)
             {
+                if (agent.Allegiance != Allegiance.Ally)
+                    agent.SelectTarget(Agents);
+
                 agent.ActIfAble();
             }
         }
@@ -32,8 +35,13 @@ namespace Subterfuge
         public void EndRound()
         {
             ++Day;
-            //ReportMessages.Clear();
             Agents.OrderedList.ForEach(a => a.Reset());
+        }
+
+        public void Reset()
+        {
+            Day = 1;
+            Agents = new AgentList();
         }
 
         public static string GenerateUniqueCodename()

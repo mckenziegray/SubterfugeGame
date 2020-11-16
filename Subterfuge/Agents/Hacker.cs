@@ -1,4 +1,5 @@
-﻿using Subterfuge.Enums;
+﻿using System;
+using Subterfuge.Enums;
 
 namespace Subterfuge.Agents
 {
@@ -41,6 +42,11 @@ namespace Subterfuge.Agents
             }
 
             return report;
+        }
+
+        public override void SelectTarget(AgentList agents)
+        {
+            throw new NotSupportedException();
         }
     }
 }

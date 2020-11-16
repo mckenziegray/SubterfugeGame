@@ -1,4 +1,5 @@
-﻿using Subterfuge.Enums;
+﻿using System;
+using Subterfuge.Enums;
 
 namespace Subterfuge.Agents
 {
@@ -25,6 +26,11 @@ namespace Subterfuge.Agents
                 report += $". {Target.Gender.ToCommonPronoun()} had {Target.Visitors.Count} {(Target.Visitors.Count == 1 ? "visitor" : "visitors")}: {string.Join(", ", Target.Visitors)}";
             
             return report;
+        }
+
+        public override void SelectTarget(AgentList agents)
+        {
+            throw new NotSupportedException();
         }
     }
 }

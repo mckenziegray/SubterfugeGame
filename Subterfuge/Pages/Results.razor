@@ -1,7 +1,6 @@
 ﻿@page "/results"
 @inject GameService Game
 
-
 <div class="row justify-content-center">
     <div class="col center-contents-horizontal">
         <h2>Day @Game.Day</h2>
@@ -48,7 +47,21 @@
 @code {
     private void Submit()
     {
-        Game.EndRound();
-        Nav.NavigateTo("/selectagents");
+        if (!Game.Agents[nameof(Android)].IsAlive && !Game.Agents[nameof(Drudge)].IsAlive && !Game.Agents[nameof(Mastermind)].IsAlive)
+        {
+            // Win
+            Nav.NavigateTo("/gameover/true");
+        }
+        else if (!Game.Agents.OrderedList.Any(a => a.Allegiance == Allegiance.Ally && a.IsAlive))
+        {
+            // Lose
+            Nav.NavigateTo("/gameover/true");
+        }
+        else
+        {
+            // Keep playing
+            Game.EndRound();
+            Nav.NavigateTo("/selectagents");
+        }
     }
 }
