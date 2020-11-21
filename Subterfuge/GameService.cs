@@ -54,7 +54,7 @@ namespace Subterfuge
                 if (agent.Allegiance != Allegiance.Ally)
                     agent.SelectTarget(Agents);
 
-                agent.ActIfAppropriate();
+                agent.ActIfAble();
             }
         }
 
