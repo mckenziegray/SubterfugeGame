@@ -1,15 +1,48 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Subterfuge.Agents;
 using Subterfuge.Enums;
 
 namespace Subterfuge
 {
     public static class Extensions
     {
-        public static int Count(this AgentList source, Func<Agent, bool> predicate)
+        /// <summary>
+        /// Randomizes the order of the items in the list.
+        /// </summary>
+        /// <typeparam name="T">The type of the items in the list</typeparam>
+        /// <param name="list">The list to shuffle.</param>
+        /// <param name="random">A <see cref="Random"/> object to be used for randomizing the order. A new object will be created if none is provided.</param>
+        public static void Shuffle<T>(this IList<T> list, Random random = null)
         {
-            return Enumerable.Count(source.OrderedList, predicate);
+            random ??= new Random();
+
+            for (int i = list.Count; i > 0; i--)
+            {
+                int r = random.Next(0, i);
+                T temp = list[0];
+                list[0] = list[r];
+                list[r] = temp;
+            }
+        }
+
+        /// <summary>
+        /// Creates an instance of a given type.
+        /// </summary>
+        /// <typeparam name="T">The type of object to instantiate.</typeparam>
+        /// <param name="source">A <see cref="Type"/> object representing the type to instantiate.</param>
+        /// <param name="parameters">The parameters to pass to the constructor. Pass no parameters to call an empty constructor.</param>
+        /// <returns>An object instance of the given type.</returns>
+        public static T Instantiate<T>(this Type source, params object[] parameters)
+        {
+            try
+            {
+                return (T)source.GetConstructor(parameters.Select(p => p.GetType()).ToArray()).Invoke(parameters);
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         public static string ToCommonPronoun(this Gender source)
