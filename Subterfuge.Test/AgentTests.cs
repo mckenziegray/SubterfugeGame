@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using Subterfuge.Agents;
 using Subterfuge.Enums;
+using Subterfuge.Exceptions;
 
 namespace Subterfuge.Test
 {
@@ -110,9 +109,9 @@ namespace Subterfuge.Test
             Assert.IsFalse(agent.IsBlocked);
             Assert.IsNull(agent.Blocker);
 
-            agent.Frame(framer);
-            agent.Reset();
-            Assert.IsFalse(agent.WasFramed);
+            //agent.Frame(framer);
+            //agent.Reset();
+            //Assert.IsFalse(agent.WasFramed);
 
             agent.Attack(killer);
             agent.Reset();
@@ -120,6 +119,158 @@ namespace Subterfuge.Test
             Assert.IsFalse(agent.WasKilled);
             Assert.IsFalse(agent.IsAlive);
             Assert.IsNotNull(agent.Killer);
+        }
+
+        [Test]
+        public void TestVisit()
+        {
+            Agent agent = new Hacker();
+            Agent visitor1 = new Android();
+            Agent visitor2 = new Saboteur();
+
+            agent.Visit(visitor1);
+            Assert.AreEqual(1, agent.Visitors.Count);
+            Assert.IsTrue(agent.Visitors.Contains(visitor1.Codename));
+
+            agent.Visit(visitor2);
+            Assert.AreEqual(2, agent.Visitors.Count);
+            Assert.IsTrue(agent.Visitors.Contains(visitor1.Codename));
+            Assert.IsTrue(agent.Visitors.Contains(visitor2.Codename));
+        }
+
+        [Test]
+        public void TestProtect()
+        {
+            Agent agent = new Hacker();
+            Agent protector = new Medic();
+            Agent attacker = new Android();
+
+            agent.Protect(protector);
+            Assert.IsTrue(agent.IsProtected);
+            Assert.IsNotNull(agent.Protector);
+            Assert.IsTrue(agent.Visitors.Contains(protector.Codename));
+
+            agent.Attack(attacker);
+            Assert.IsTrue(agent.WasAttacked);
+            Assert.IsTrue(agent.IsAlive);
+        }
+
+        [Test]
+        public void TestBlock()
+        {
+            Agent agent = new Hacker();
+            Agent blocker = new Saboteur();
+
+            agent.Block(blocker);
+            Assert.IsTrue(agent.IsBlocked);
+            Assert.IsNotNull(agent.Blocker);
+            Assert.IsTrue(agent.Visitors.Contains(blocker.Codename));
+            Assert.IsFalse(agent.CanAct);
+
+            // CanAct should still be false after a target is assigned
+            agent.Target = blocker;
+            Assert.IsFalse(agent.CanAct);
+        }
+
+        [Test]
+        public void TestFrame()
+        {
+            Agent agent = new Hacker();
+            Agent framer = new Fabricator();
+
+            agent.Frame(framer);
+            Assert.IsTrue(agent.WasFramed);
+            Assert.IsTrue(agent.Visitors.Contains(framer.Codename));
+        }
+
+        [Test]
+        public void TestAttack()
+        {
+            Agent agent = new Hacker();
+            Agent attacker = new Android();
+            Agent protector = new Medic();
+
+            agent.Protect(protector);
+            agent.Attack(attacker);
+            Assert.IsTrue(agent.WasAttacked);
+            Assert.IsTrue(agent.IsAlive);
+            Assert.IsNull(agent.Killer);
+
+            agent.Reset();
+
+            agent.Attack(attacker);
+            Assert.IsTrue(agent.WasAttacked);
+            Assert.IsFalse(agent.IsAlive);
+            Assert.IsNotNull(agent.Killer);
+            Assert.AreSame(attacker, agent.Killer);
+        }
+
+        [Test]
+        public void TestExecute()
+        {
+            Agent agent = new Hacker();
+
+            agent.Execute();
+            Assert.IsFalse(agent.IsAlive);
+            Assert.IsFalse(agent.WasKilled);
+            Assert.IsNull(agent.Killer);
+        }
+
+        [Test]
+        public void TestActIfAble()
+        {
+            Agent actor = new Assassin();
+            Agent target = new Drudge();
+            Agent blocker = new Saboteur();
+
+            // No target and IsActing is false => no action
+            Assert.Throws<NoTargetException>(() => actor.ActIfAble());
+            Assert.IsFalse(target.WasAttacked);
+            actor.Reset();
+
+            // IsActing is true but no target => no action
+            actor.IsActing = true;
+            Assert.Throws<NoTargetException>(() => actor.ActIfAble());
+            Assert.IsFalse(target.WasAttacked);
+            actor.Reset();
+
+            // Has a target but IsActing is false => no action
+            actor.Target = target;
+            actor.ActIfAble();
+            Assert.IsFalse(target.WasAttacked);
+            actor.Reset();
+
+            // Has a target and IsActing is true but blocked => no action
+            actor.Target = target;
+            actor.IsActing = true;
+            actor.Block(blocker);
+            actor.ActIfAble();
+            Assert.IsFalse(target.WasAttacked);
+            actor.Reset();
+
+            // Has a target and IsActing is true, and not blocked => action
+            actor.Target = target;
+            actor.IsActing = true;
+            actor.ActIfAble();
+            Assert.IsTrue(target.WasAttacked);
+            actor.Reset();
+            target.Reset();
+
+            // Target is dead => no action
+            actor.Target = target;
+            actor.IsActing = true;
+            actor.ActIfAble();
+            Assert.IsFalse(target.WasAttacked);
+            actor.Reset();
+            target = new Drudge();
+
+            // Actor is dead => no action
+            actor.Target = target;
+            actor.IsActing = true;
+            actor.Execute();
+            actor.ActIfAble();
+            Assert.IsFalse(target.WasAttacked);
+            actor.Reset();
         }
     }
 }
