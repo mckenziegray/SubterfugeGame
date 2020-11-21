@@ -116,11 +116,14 @@ namespace Subterfuge.Agents
 
         public void ActIfAble()
         {
-            if (RequiresTarget && Target is null)
-                throw new NoTargetException(GetType());
+            if (IsActing)
+            {
+                if (RequiresTarget && Target is null)
+                    throw new NoTargetException(GetType());
 
-            if (CanAct && IsActing)
-                Act();
+                if (CanAct)
+                    Act();
+            }
         }
 
         public abstract void SelectTarget(AgentList agents);

@@ -224,7 +224,7 @@ namespace Subterfuge.Test
             Agent blocker = new Saboteur();
 
             // No target and IsActing is false => no action
-            Assert.Throws<NoTargetException>(() => actor.ActIfAble());
+            actor.ActIfAble();
             Assert.IsFalse(target.WasAttacked);
             actor.Reset();
 

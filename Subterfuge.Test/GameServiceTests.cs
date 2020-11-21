@@ -27,14 +27,15 @@ namespace Subterfuge.Test
         public void TestGenerateUniqueCodename()
         {
             // Generate a bunch of codenames and make sure none of them were the same
-            int codenamesToGenerate = 1000000;
+            int codenamesToGenerate = 100000;
             List<string> generatedCodenames = new List<string>(codenamesToGenerate);
             for (int i = 0; i < codenamesToGenerate; i++)
             {
                 string newCodename = GameService.GenerateUniqueCodename();
-                Assert.IsFalse(generatedCodenames.Contains(newCodename));
                 generatedCodenames.Add(newCodename);
             }
+
+            Assert.AreEqual(generatedCodenames.Distinct().Count(), generatedCodenames.Count);
         }
 
         [Test]
