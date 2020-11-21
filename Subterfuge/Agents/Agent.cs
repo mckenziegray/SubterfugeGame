@@ -142,7 +142,7 @@ namespace Subterfuge.Agents
         ///          Assassin:      Kills one target. Cannot kill the Mastermind, Android, or Sleeper.
         ///          Convoy:        Protects one target from death. Sacrifices self if the target would have died.
         ///          Hacker:        Attepmpts to determine if a target is innocent or not. Sees Mastermind as innocent. Always identifies the Android specifically.
-        ///          Interrogator:  Attempts to identify one target. usually 
+        ///          Interrogator:  Attempts to identify one target.
         ///          Marshall:      Role-blocks and protects one target.
         ///          Medic:         Protects one target from death unless killed first.
         ///          Sentry:        Surveils one target and reports who, if anyone, they visited.
