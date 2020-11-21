@@ -25,7 +25,7 @@ namespace Subterfuge.Agents
 
         public override void SelectTarget(AgentList agents)
         {
-            List<Agent> validTargets = agents.ShuffledList.Where(a => a != this && a.Allegiance != Allegiance.Enemy && a.IsAlive).ToList();
+            List<Agent> validTargets = agents.ShuffledList.Where(a => a != this && a.Allegiance == Allegiance.Ally && a.IsAlive).ToList();
 
             if (validTargets.Any())
             {
