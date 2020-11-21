@@ -8,9 +8,6 @@ namespace Subterfuge.Test
 {
     public class AgentListTests
     {
-        [SetUp]
-        public void Setup() { }
-
         [Test]
         public void TestConstructor()
         {
