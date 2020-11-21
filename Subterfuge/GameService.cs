@@ -10,9 +10,35 @@ namespace Subterfuge
     {
         public const int MAX_AGENT_SELECTIONS = 3;
 
+        /// <summary>
+        /// A list of all agent types. The order of this list is the order in which agents will act.
+        /// </summary>
+        /// <remarks>
+        /// There should be NO DUPLICATES in this list.
+        /// </remarks>
+        public static readonly Type[] AGENT_TYPES_ORDERED =
+        {
+            typeof(Saboteur),
+            typeof(Swallow),
+            typeof(Marshal),
+            typeof(Convoy),
+            typeof(Medic),
+            typeof(Android),
+            typeof(Assassin),
+            typeof(Drudge),
+            typeof(Mastermind),
+            typeof(Fabricator),
+            typeof(Cutout),
+            typeof(Interrogator),
+            typeof(Hacker),
+            typeof(Sentry),
+            typeof(Sleeper)
+        };
+
         public static Random Random { get; private set; } = new Random();
-        public int Day { get; protected set; }
-        public AgentList Agents { get; set; }
+
+        public int Round { get; protected set; }
+        public AgentList Agents { get; protected set; }
 
         private static readonly List<string> _generatedCodenames = new List<string>();
 
@@ -34,13 +60,13 @@ namespace Subterfuge
 
         public void EndRound()
         {
-            ++Day;
+            ++Round;
             Agents.OrderedList.ForEach(a => a.Reset());
         }
 
         public void Reset()
         {
-            Day = 1;
+            Round = 1;
             Agents = new AgentList();
         }
 

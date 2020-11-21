@@ -3,7 +3,7 @@
 
 <div class="row justify-content-center">
     <div class="col center-contents-horizontal">
-        <h2>Day @Game.Day</h2>
+        <h2>Day @Game.Round</h2>
         <p>Select up to @GameService.MAX_AGENT_SELECTIONS @(GameService.MAX_AGENT_SELECTIONS == 1 ? "agent" : "agents") to assign.</p>
 
         @for (int i = 0; i < Game.Agents.Allies.Count; i+= 2)
