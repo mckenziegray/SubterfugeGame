@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using DotNetExtensions;
 using NUnit.Framework;
 using Subterfuge.Agents;
 using Subterfuge.Enums;
