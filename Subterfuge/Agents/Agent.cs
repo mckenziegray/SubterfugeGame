@@ -37,19 +37,10 @@ namespace Subterfuge.Agents
         public bool WasAttacked { get; protected set; }
         public bool WasKilled => WasAttacked && !IsAlive;
         public bool WasFramed { get; protected set; }
-        public bool IsBlocked => Blocker?.IsAlive ?? false;
+        public bool IsBlocked => Blocker?.IsAlive == true;
         public bool IsProtected => Protector != null && Protector.IsAlive && !Protector.IsBlocked;
         public abstract bool RequiresTarget { get; }
-        public bool CanAct
-        {
-            get
-            {
-                if (RequiresTarget && Target is null)
-                    throw new NoTargetException(GetType());
-
-                return !IsBlocked;
-            }
-        }
+        public bool CanAct => IsAlive && !(RequiresTarget && Target is null) && !IsBlocked;
         public virtual string Name => GetType().Name;
 
         protected bool RedirectKill { get; set; }
@@ -123,12 +114,13 @@ namespace Subterfuge.Agents
             Kill(null);
         }
 
-        public void ActIfAble()
+        public void ActIfAppropriate()
         {
-            if (IsAlive && IsActing && CanAct)
-            {
+            if (RequiresTarget && Target is null)
+                throw new NoTargetException(GetType());
+
+            if (CanAct && IsActing)
                 Act();
-            }
         }
 
         public abstract void SelectTarget(AgentList agents);
