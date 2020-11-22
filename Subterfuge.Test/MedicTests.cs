@@ -5,22 +5,22 @@ using Subterfuge.Enums;
 
 namespace Subterfuge.Test
 {
-    public class ConvoyTests
+    public class MedicTests
     {
         protected GameService Game { get; set; }
-        protected Convoy Agent { get; set; }
+        protected Medic Agent { get; set; }
 
         [SetUp]
         public void Setup()
         {
             Game = new();
-            Agent = (Convoy)Game.Agents[nameof(Convoy)];
+            Agent = (Medic)Game.Agents[nameof(Medic)];
         }
 
         [Test]
         public void TestName()
         {
-            Assert.AreEqual("Convoy", Agent.Name);
+            Assert.AreEqual("Medic", Agent.Name);
         }
 
         [Test]
@@ -44,7 +44,7 @@ namespace Subterfuge.Test
         [Test]
         public void TestAct()
         {
-            Helpers.TestProtectAction(Agent, Game, true);
+            Helpers.TestProtectAction(Agent, Game, false);
         }
     }
 }
