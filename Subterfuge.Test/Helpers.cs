@@ -86,5 +86,69 @@ namespace Subterfuge.Test
             Assert.IsFalse(targetTarget.WasAttacked);
             Assert.IsTrue(target.Visitors.Contains(blocker.Codename));
         }
+
+        //public static void TestBlockerKillInteraction(Agent blocker, Agent killer, GameService game)
+        //{
+        //    TestBlockerKillInteraction(blocker, killer, game, true);
+        //}
+
+        //public static void TestBlockerKillInteraction(Agent blocker, Agent killer, GameService game, bool shouldKill)
+        //{
+        //    TestBlockerKillInteraction(blocker, killer, game, shouldKill, true);
+        //    game.Reset();
+        //    blocker = game.Agents[blocker.GetType().Name];
+        //    killer = game.Agents[killer.GetType().Name];
+
+        //    TestBlockerKillInteraction(blocker, killer, game, shouldKill, false);
+        //}
+
+        public static void TestBlockerKillInteraction(Agent blocker, Agent killer, GameService game, bool shouldKill, bool killerIntendsToAct)
+        {
+            Agent target = game.Agents[nameof(Hacker)];
+
+            blocker.IsActing = true;
+            blocker.Target = killer;
+            if (killerIntendsToAct)
+            {
+                killer.IsActing = true;
+                killer.Target = target;
+            }
+
+            foreach (Type agentType in GameService.AGENT_TYPES_ORDERED)
+            {
+                game.Agents[agentType.Name].ActIfAble();
+            }
+
+            Assert.True(killer.Visitors.Contains(blocker.Codename));
+            if (shouldKill)
+            {
+                Assert.IsFalse(killer.IsBlocked);
+                Assert.IsNull(killer.Blocker);
+            }
+            else
+            {
+                Assert.IsTrue(killer.IsBlocked);
+                Assert.AreSame(blocker, killer.Blocker);
+            }
+
+            Assert.IsFalse(target.Visitors.Contains(killer.Codename));
+            Assert.IsFalse(target.WasAttacked);
+            Assert.IsTrue(target.IsAlive);
+
+            Assert.IsFalse(blocker.Visitors.Contains(killer.Codename));
+            if (shouldKill)
+            {
+                Assert.AreSame(blocker, killer.Target);
+                Assert.IsFalse(blocker.IsAlive);
+                Assert.IsTrue(blocker.WasKilled);
+                Assert.AreSame(killer, blocker.Killer);
+            }
+            else
+            {
+                Assert.IsTrue(blocker.IsAlive);
+                Assert.IsFalse(blocker.WasKilled);
+                Assert.IsNull(blocker.Killer);
+            }
+        }
     }
 }

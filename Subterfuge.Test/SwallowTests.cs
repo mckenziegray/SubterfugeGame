@@ -62,23 +62,16 @@ namespace Subterfuge.Test
         {
             Helpers.TestBlockAction(Agent, Game);
             Helpers.TestProtectAction(Agent, Game, false);
+            Game.Reset();
+            Agent = (Swallow)Game.Agents[nameof(Swallow)];
 
-            Agent android = Game.Agents[nameof(Android)];
-            android.IsActing = true;
-            android.Target = Game.Agents[nameof(Hacker)];
-            Agent.IsActing = true;
-            Agent.Target = android;
+            Helpers.TestBlockerKillInteraction(Agent, Game.Agents[nameof(Android)], Game, true, true);
+            Game.Reset();
+            Agent = (Swallow)Game.Agents[nameof(Swallow)];
 
-            foreach (Type agentType in GameService.AGENT_TYPES_ORDERED)
-            {
-                Game.Agents[agentType.Name].ActIfAble();
-            }
-
-            Assert.IsFalse(android.IsBlocked);
-            Assert.IsNull(android.Blocker);
-            Assert.AreSame(Agent, android.Target);
-            Assert.IsTrue(Agent.WasKilled);
-            Assert.AreSame(android, Agent.Killer);
+            Helpers.TestBlockerKillInteraction(Agent, Game.Agents[nameof(Mastermind)], Game, true, true);
+            Game.Reset();
+            Agent = (Swallow)Game.Agents[nameof(Swallow)];
         }
     }
 }

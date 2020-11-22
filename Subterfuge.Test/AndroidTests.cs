@@ -62,82 +62,21 @@ namespace Subterfuge.Test
         [Test]
         public void TestAct()
         {
-            Agent target = Game.Agents[nameof(Hacker)];
-
-            Helpers.TestKillAction(Agent, Game);
+            Helpers.TestBlockerKillInteraction(Game.Agents[nameof(Marshal)], Agent, Game, true, true);
             Game.Reset();
-            Agent = (Android)Game.Agents[Agent.GetType().Name];
-            target = Game.Agents[nameof(Hacker)];
+            Agent = (Android)Game.Agents[nameof(Android)];
 
-            // If targeted by a blocker, the Android should change targets and kill the blocker (without visiting either one)
-            Agent blocker1 = Game.Agents[nameof(Swallow)];
-            Agent.IsActing = true;
-            Agent.Target = target;
-            blocker1.IsActing = true;
-            blocker1.Target = Agent;
-            foreach (Type agentType in GameService.AGENT_TYPES_ORDERED)
-                Game.Agents[agentType.Name].ActIfAble();
-            Assert.IsFalse(target.WasAttacked);
-            Assert.IsFalse(target.Visitors.Contains(Agent.Codename));
-            Assert.IsTrue(target.IsAlive);
-            Assert.IsTrue(Agent.Target == blocker1);
-            Assert.IsTrue(blocker1.WasAttacked);
-            Assert.IsFalse(blocker1.Visitors.Contains(Agent.Codename));
-            Assert.IsFalse(blocker1.IsAlive);
+            Helpers.TestBlockerKillInteraction(Game.Agents[nameof(Swallow)], Agent, Game, true, true);
             Game.Reset();
-            Agent = (Android)Game.Agents[Agent.GetType().Name];
-            target = Game.Agents[nameof(Hacker)];
+            Agent = (Android)Game.Agents[nameof(Android)];
 
-            Agent blocker2 = Game.Agents[nameof(Marshal)];
-            Agent.IsActing = true;
-            Agent.Target = target;
-            blocker2.IsActing = true;
-            blocker2.Target = Agent;
-            foreach (Type agentType in GameService.AGENT_TYPES_ORDERED)
-                Game.Agents[agentType.Name].ActIfAble();
-            Assert.IsFalse(target.WasAttacked);
-            Assert.IsFalse(target.Visitors.Contains(Agent.Codename));
-            Assert.IsTrue(target.IsAlive);
-            Assert.IsTrue(Agent.Target == blocker2);
-            Assert.IsTrue(blocker2.WasAttacked);
-            Assert.IsFalse(blocker2.Visitors.Contains(Agent.Codename));
-            Assert.IsFalse(blocker2.IsAlive);
+            Helpers.TestBlockerKillInteraction(Game.Agents[nameof(Marshal)], Agent, Game, true, false);
             Game.Reset();
-            Agent = (Android)Game.Agents[Agent.GetType().Name];
-            target = Game.Agents[nameof(Hacker)];
+            Agent = (Android)Game.Agents[nameof(Android)];
 
-            // The same should be true even if the Android doesn't intend to act
-            Agent blocker3 = Game.Agents[nameof(Swallow)];
-            blocker3.IsActing = true;
-            blocker3.Target = Agent;
-            foreach (Type agentType in GameService.AGENT_TYPES_ORDERED)
-                Game.Agents[agentType.Name].ActIfAble();
-            Assert.IsFalse(target.WasAttacked);
-            Assert.IsFalse(target.Visitors.Contains(Agent.Codename));
-            Assert.IsTrue(target.IsAlive);
-            Assert.IsTrue(Agent.Target == blocker3);
-            Assert.IsTrue(blocker3.WasAttacked);
-            Assert.IsFalse(blocker3.Visitors.Contains(Agent.Codename));
-            Assert.IsFalse(blocker3.IsAlive);
+            Helpers.TestBlockerKillInteraction(Game.Agents[nameof(Swallow)], Agent, Game, true, false);
             Game.Reset();
-            Agent = (Android)Game.Agents[Agent.GetType().Name];
-            target = Game.Agents[nameof(Hacker)];
-
-            Agent blocker4 = Game.Agents[nameof(Marshal)];
-            blocker4.IsActing = true;
-            blocker4.Target = Agent;
-            foreach (Type agentType in GameService.AGENT_TYPES_ORDERED)
-                Game.Agents[agentType.Name].ActIfAble();
-            Assert.IsFalse(target.WasAttacked);
-            Assert.IsFalse(target.Visitors.Contains(Agent.Codename));
-            Assert.IsTrue(target.IsAlive);
-            Assert.IsTrue(Agent.Target == blocker4);
-            Assert.IsTrue(blocker4.WasAttacked);
-            Assert.IsFalse(blocker4.Visitors.Contains(Agent.Codename));
-            Assert.IsFalse(blocker4.IsAlive);
-            Game.Reset();
-            Agent = (Android)Game.Agents[Agent.GetType().Name];
-            target = Game.Agents[nameof(Hacker)];
+            Agent = (Android)Game.Agents[nameof(Android)];
         }
     }
 }
