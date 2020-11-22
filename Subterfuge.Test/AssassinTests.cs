@@ -14,7 +14,7 @@ namespace Subterfuge.Test
         public void Setup()
         {
             Game = new();
-            Agent = (Assassin)Game.Agents[Agent.GetType().Name];
+            Agent = (Assassin)Game.Agents[nameof(Assassin)];
         }
 
         [Test]
@@ -47,9 +47,9 @@ namespace Subterfuge.Test
             Agent target = Game.Agents[nameof(Hacker)];
             Agent protector = Game.Agents[nameof(Medic)];
 
-            Agent.Target = target;
+            // Protected target should be attacked but not die
             Agent.IsActing = true;
-
+            Agent.Target = target;
             target.Protect(protector);
             Agent.ActIfAble();
             Assert.IsTrue(target.WasAttacked);
@@ -57,6 +57,9 @@ namespace Subterfuge.Test
             Agent.Reset();
             target.Reset();
 
+            // Unprotected agent should be killed
+            Agent.IsActing = true;
+            Agent.Target = target;
             Agent.ActIfAble();
             Assert.IsTrue(target.WasAttacked);
             Assert.IsFalse(target.IsAlive);

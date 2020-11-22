@@ -16,13 +16,13 @@ namespace Subterfuge.Test
         public void Setup()
         {
             Game = new();
-            Agent = (Cutout)Game.Agents[Agent.GetType().Name];
+            Agent = (Cutout)Game.Agents[nameof(Cutout)];
         }
 
         [Test]
         public void TestName()
         {
-            Assert.AreEqual("Cutout", Agent.Name);
+            Assert.AreEqual("Cut-out", Agent.Name);
         }
 
         [Test]
@@ -40,7 +40,7 @@ namespace Subterfuge.Test
         [Test]
         public void TestSelectTarget()
         {
-            Type[] invalidTargets = { typeof(Android), typeof(Mastermind) };
+            Type[] invalidTargets = { typeof(Cutout) };
             int numTargets = 10000;
             List<Type> targets = new List<Type>(numTargets);
 
