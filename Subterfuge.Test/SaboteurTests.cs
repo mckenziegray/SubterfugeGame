@@ -7,22 +7,22 @@ using Subterfuge.Enums;
 
 namespace Subterfuge.Test
 {
-    public class DrudgeTests
+    public class SaboteurTests
     {
         protected GameService Game { get; set; }
-        protected Drudge Agent { get; set; }
+        protected Saboteur Agent { get; set; }
 
         [SetUp]
         public void Setup()
         {
             Game = new();
-            Agent = (Drudge)Game.Agents[nameof(Drudge)];
+            Agent = (Saboteur)Game.Agents[nameof(Saboteur)];
         }
 
         [Test]
         public void TestName()
         {
-            Assert.AreEqual("Drudge", Agent.Name);
+            Assert.AreEqual("Saboteur", Agent.Name);
         }
 
         [Test]
@@ -60,7 +60,7 @@ namespace Subterfuge.Test
         [Test]
         public void TestAct()
         {
-            Helpers.TestKillAction(Agent, Game);
+            Helpers.TestBlockAction(Agent, Game);
         }
     }
 }

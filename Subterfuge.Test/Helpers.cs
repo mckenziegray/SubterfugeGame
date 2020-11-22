@@ -47,7 +47,7 @@ namespace Subterfuge.Test
             {
                 game.Agents[agentType.Name].ActIfAble();
 
-                if (agentType == typeof(Agent))
+                if (agentType == protector.GetType())
                 {
                     Assert.IsTrue(target.IsProtected);
                     Assert.AreSame(target.Protector, protector);
@@ -63,6 +63,26 @@ namespace Subterfuge.Test
             Assert.AreEqual(protectorShouldDie, protector.WasKilled);
             Assert.AreEqual(!protectorShouldDie, protector.IsAlive);
             Assert.IsTrue(protectorShouldDie ? protector.Killer == attacker : protector.Killer is null);
+        }
+
+        public static void TestBlockAction(Agent blocker, GameService game)
+        {
+            Agent target = game.Agents[nameof(Drudge)];
+            Agent targetTarget = game.Agents[nameof(Android)];
+
+            blocker.IsActing = true;
+            blocker.Target = target;
+            target.IsActing = true;
+            target.SelectTarget(game.Agents);
+
+            foreach (Type agentType in GameService.AGENT_TYPES_ORDERED)
+            {
+                game.Agents[agentType.Name].ActIfAble();
+            }
+
+            Assert.IsTrue(target.IsBlocked);
+            Assert.AreSame(blocker, target.Blocker);
+            Assert.IsFalse(targetTarget.WasAttacked);
         }
     }
 }
