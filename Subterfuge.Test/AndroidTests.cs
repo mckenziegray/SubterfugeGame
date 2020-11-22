@@ -64,25 +64,7 @@ namespace Subterfuge.Test
         {
             Agent target = Game.Agents[nameof(Hacker)];
 
-            // A protected target should be visited and attacked but not killed
-            Agent protector = Game.Agents[nameof(Medic)];
-            Agent.IsActing = true;
-            Agent.Target = target;
-            Agent.Target.Protect(protector);
-            Agent.ActIfAble();
-            Assert.IsTrue(Agent.Target.WasAttacked);
-            Assert.IsTrue(Agent.Target.Visitors.Contains(Agent.Codename));
-            Assert.IsTrue(Agent.Target.IsAlive);
-            Agent.Target.Reset();
-            Agent.Reset();
-
-            // An unprotected target should be visited and killed
-            Agent.IsActing = true;
-            Agent.Target = target;
-            Agent.ActIfAble();
-            Assert.IsTrue(Agent.Target.WasAttacked);
-            Assert.IsTrue(Agent.Target.Visitors.Contains(Agent.Codename));
-            Assert.IsFalse(Agent.Target.IsAlive);
+            Helpers.TestKillAction(Agent, Game);
             Game.Reset();
             Agent = (Android)Game.Agents[Agent.GetType().Name];
             target = Game.Agents[nameof(Hacker)];

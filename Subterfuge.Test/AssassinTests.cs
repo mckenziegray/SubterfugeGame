@@ -44,27 +44,7 @@ namespace Subterfuge.Test
         [Test]
         public void TestAct()
         {
-            Agent target = Game.Agents[nameof(Hacker)];
-            Agent protector = Game.Agents[nameof(Medic)];
-
-            // Protected target should be attacked but not die
-            Agent.IsActing = true;
-            Agent.Target = target;
-            target.Protect(protector);
-            Agent.ActIfAble();
-            Assert.IsTrue(target.WasAttacked);
-            Assert.IsTrue(target.IsAlive);
-            Agent.Reset();
-            target.Reset();
-
-            // Unprotected agent should be killed
-            Agent.IsActing = true;
-            Agent.Target = target;
-            Agent.ActIfAble();
-            Assert.IsTrue(target.WasAttacked);
-            Assert.IsFalse(target.IsAlive);
-            Game.Reset();
-            Agent = (Assassin)Game.Agents[nameof(Assassin)];
+            Helpers.TestKillAction(Agent, Game);
         }
     }
 }
