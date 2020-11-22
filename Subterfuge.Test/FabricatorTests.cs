@@ -69,10 +69,12 @@ namespace Subterfuge.Test
         [Test]
         public void TestAct()
         {
-            Agent.SelectTarget(Game.Agents);
+            Agent target = new Hacker();
+            Agent.Target = target;
             Agent.ActIfAble();
-            Assert.IsTrue(Agent.Target.WasFramed);
-            Agent.Target.Reset();
+            Assert.IsTrue(target.WasFramed);
+            Assert.IsTrue(target.Visitors.Contains(Agent.Codename));
+            target.Reset();
             Agent.Reset();
         }
     }

@@ -40,5 +40,14 @@ namespace Subterfuge.Test
         {
             Assert.Throws<NotSupportedException>(() => Agent.SelectTarget(Game.Agents));
         }
+
+        [Test]
+        public void TestAct()
+        {
+            Agent target = new Hacker();
+            Agent.Target = target;
+            Agent.ActIfAble();
+            Assert.IsTrue(target.Visitors.Contains(target.Codename));
+        }
     }
 }

@@ -58,6 +58,7 @@ namespace Subterfuge.Test
             Assert.IsFalse(target.WasKilled);
             Assert.IsTrue(target.IsAlive);
             Assert.AreEqual(!protectorShouldDie, target.IsProtected);
+            Assert.IsTrue(target.Visitors.Contains(protector.Codename));
 
             Assert.IsFalse(protector.WasAttacked);
             Assert.AreEqual(protectorShouldDie, protector.WasKilled);
@@ -83,6 +84,7 @@ namespace Subterfuge.Test
             Assert.IsTrue(target.IsBlocked);
             Assert.AreSame(blocker, target.Blocker);
             Assert.IsFalse(targetTarget.WasAttacked);
+            Assert.IsTrue(target.Visitors.Contains(blocker.Codename));
         }
     }
 }
