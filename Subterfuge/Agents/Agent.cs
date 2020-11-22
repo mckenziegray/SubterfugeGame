@@ -35,7 +35,7 @@ namespace Subterfuge.Agents
         /// </summary>
         public Agent Killer { get; protected set; }
         public bool WasAttacked { get; protected set; }
-        public bool WasKilled => WasAttacked && !IsAlive;
+        public bool WasKilled { get; protected set; }
         public bool WasFramed { get; protected set; }
         public bool IsBlocked => Blocker?.IsAlive == true;
         public bool IsProtected => Protector != null && Protector.IsAlive && !Protector.IsBlocked;
@@ -116,11 +116,14 @@ namespace Subterfuge.Agents
 
         public void ActIfAble()
         {
-            if (RequiresTarget && Target is null)
-                throw new NoTargetException(GetType());
+            if (IsActing)
+            {
+                if (RequiresTarget && Target is null)
+                    throw new NoTargetException(GetType());
 
-            if (CanAct && IsActing)
-                Act();
+                if (CanAct)
+                    Act();
+            }
         }
 
         public abstract void SelectTarget(AgentList agents);
@@ -150,7 +153,9 @@ namespace Subterfuge.Agents
         public void Reset()
         {
             IsActing = false;
+            WasFramed = false;
             WasAttacked = false;
+            WasKilled = false;
             RedirectKill = false;
 
             Target = null;
@@ -164,6 +169,7 @@ namespace Subterfuge.Agents
         {
             IsAlive = false;
             Killer = killer;
+            WasKilled = true;
         }
     }
 }

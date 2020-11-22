@@ -12,7 +12,7 @@ namespace Subterfuge.Agents
 
         protected override void Act()
         {
-            // Does nothing
+            Target.Visit(this);
         }
 
         public override string GetReport()
