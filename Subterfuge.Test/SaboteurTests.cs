@@ -40,7 +40,7 @@ namespace Subterfuge.Test
         [Test]
         public void TestSelectTarget()
         {
-            Type[] invalidTargets = GameService.AGENT_TYPES_ORDERED.Where(t => Game.Agents[t.Name].Allegiance != Allegiance.Enemy).ToArray();
+            Type[] invalidTargets = GameService.AGENT_TYPES_ORDERED.Where(t => Game.Agents[t.Name].Allegiance != Allegiance.Ally).ToArray();
             int numTargets = 10000;
             List<Type> targets = new List<Type>(numTargets);
 

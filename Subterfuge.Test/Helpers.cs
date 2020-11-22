@@ -57,7 +57,7 @@ namespace Subterfuge.Test
             Assert.IsTrue(target.WasAttacked);
             Assert.IsFalse(target.WasKilled);
             Assert.IsTrue(target.IsAlive);
-            Assert.IsFalse(target.IsProtected);
+            Assert.AreEqual(!protectorShouldDie, target.IsProtected);
 
             Assert.IsFalse(protector.WasAttacked);
             Assert.AreEqual(protectorShouldDie, protector.WasKilled);
