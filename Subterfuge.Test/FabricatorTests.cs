@@ -70,6 +70,7 @@ namespace Subterfuge.Test
         public void TestAct()
         {
             Agent target = new Hacker();
+            Agent.IsActing = true;
             Agent.Target = target;
             Agent.ActIfAble();
             Assert.IsTrue(target.WasFramed);
