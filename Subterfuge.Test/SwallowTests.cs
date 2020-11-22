@@ -20,17 +20,23 @@ namespace Subterfuge.Test
         [Test]
         public void TestName()
         {
-            switch (Agent.Gender)
+            for (int i = 0; i < 1000; i++)
             {
-                case Gender.Female:
-                    Assert.AreEqual("Swallow", Agent.Name);
-                    break;
-                case Gender.Male:
-                    Assert.AreEqual("Raven", Agent.Name);
-                    break;
-                default:
-                    throw new NotImplementedException();
-            };
+                Agent = new Swallow();
+                switch (Agent.Gender)
+                {
+                    case Gender.Female:
+                        Assert.AreEqual("Swallow", Agent.Name);
+                        break;
+                    case Gender.Male:
+                        Assert.AreEqual("Raven", Agent.Name);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                };
+            }
+
+            Agent = (Swallow)Game.Agents[nameof(Swallow)];
         }
 
         [Test]
