@@ -6,32 +6,24 @@
         <h2>Day @Game.Round</h2>
         <p>Select up to @GameService.MAX_AGENT_SELECTIONS @(GameService.MAX_AGENT_SELECTIONS == 1 ? "agent" : "agents") to assign.</p>
 
-        @for (int i = 0; i < Game.Agents.Allies.Count; i+= 2)
-        {
-            <div class="row justify-content-center">
-                @for (int j = i; j <= i + 1; j++)
-                {
-                    <div class="col-6 col-sm-5 col-md-3 col-lg-2">
-                        @if (j < Game.Agents.Allies.Count)
-                        {
-                            Agent agent = Game.Agents.Allies[j];
-                            bool disabled = !agent.IsAlive || (!agent.IsActing && NumSelected >= GameService.MAX_AGENT_SELECTIONS);
-                            <div class="btn-group-toggle" data-toggle="buttons">
-                                <label class="btn btn-block btn-outline-dark @(agent.IsActing ? "active" : disabled ? "disabled" : "")">
-                                    <input type="checkbox"
-                                           checked="@agent.IsActing"
-                                           disabled="@disabled"
-                                           @onchange="e => OnAgentCheckboxChanged(e, agent)"
-                                           @onchange:preventDefault
-                                           autocomplete="off" />
-                                    @agent.Name
-                                </label>
-                            </div>
-                        }
+        <TwoColumnGrid Items="Game.Agents.Allies">
+            <ItemTemplate>
+                @{
+                    bool disabled = !context.IsAlive || (!context.IsActing && NumSelected >= GameService.MAX_AGENT_SELECTIONS);
+                    <div class="btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-block btn-outline-dark @(context.IsActing ? "active" : disabled ? "disabled" : "")">
+                            <input type="checkbox"
+                                   checked="@context.IsActing"
+                                   disabled="@disabled"
+                                   @onchange="e => OnAgentCheckboxChanged(e, context)"
+                                   @onchange:preventDefault
+                                   autocomplete="off" />
+                            @context.Name
+                        </label>
                     </div>
                 }
-            </div>
-        }
+            </ItemTemplate>
+        </TwoColumnGrid>
 
         <div class="row justify-content-center">
             <div class="col">

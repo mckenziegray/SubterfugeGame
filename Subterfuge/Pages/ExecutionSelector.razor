@@ -7,7 +7,26 @@
         <h2>Day @Game.Round</h2>
         <p>You may choose to execute one agent to execute.</p>
 
-        @for (int i = 0; i < Game.Agents.ShuffledList.Count; i += 2)
+        <TwoColumnGrid Items="Game.Agents.ShuffledList">
+            <ItemTemplate>
+                @{
+                    string modalId = $"modal-execute-{context.Name}";
+
+                    if (context.IsAlive)
+                    {
+                        <Modal id="@modalId"
+                               ConfirmButtonText="Confirm"
+                               DismissButtonText="Never Mind"
+                               ConfirmButtonClickedCallback="e => Execute(context)">
+                            <p>Are you sure you want to execute @context.Codename?</p>
+                        </Modal>
+                    }
+                }
+                <button type="button" class="btn btn-block btn-dark" data-toggle="modal" data-target="#@modalId" disabled="@(!context.IsAlive)">@context.Codename</button>
+            </ItemTemplate>
+        </TwoColumnGrid>
+
+        @*@for (int i = 0; i < Game.Agents.ShuffledList.Count; i += 2)
         {
             <div class="row justify-content-center">
                 @for (int j = i; j <= i + 1; j++)
@@ -32,7 +51,7 @@
                     </div>
                 }
             </div>
-        }
+        }*@
 
         <div class="row justify-content-center">
             <div class="col">

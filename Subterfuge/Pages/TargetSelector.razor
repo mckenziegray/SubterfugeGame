@@ -6,21 +6,11 @@
         <h2>Day @Game.Round</h2>
         <p>Select the @Agent.Name's target.</p>
 
-        @for (int i = 0; i < Game.Agents.ShuffledList.Count; i += 2)
-        {
-            <div class="row justify-content-center">
-                @for (int j = i; j <= i + 1; j++)
-                {
-                    <div class="col-6 col-sm-5 col-md-3 col-lg-2">
-                        @if (j < Game.Agents.ShuffledList.Count)
-                        {
-                            Agent agent = Game.Agents.ShuffledList[j];
-                            <button @onclick="() => SetTarget(agent)" class="btn btn-block btn-dark" disabled="@(!agent.IsAlive)">@agent.Codename</button>
-                        }
-                    </div>
-                }
-            </div>
-        }
+        <TwoColumnGrid Items="Game.Agents.ShuffledList">
+            <ItemTemplate>
+                <button @onclick="() => SetTarget(context)" class="btn btn-block btn-dark" disabled="@(!context.IsAlive)">@context.Codename</button>
+            </ItemTemplate>
+        </TwoColumnGrid>
 
         <div class="row justify-content-center">
             <div class="col">
