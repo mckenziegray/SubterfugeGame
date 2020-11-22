@@ -109,9 +109,9 @@ namespace Subterfuge.Test
             Assert.IsFalse(agent.IsBlocked);
             Assert.IsNull(agent.Blocker);
 
-            //agent.Frame(framer);
-            //agent.Reset();
-            //Assert.IsFalse(agent.WasFramed);
+            agent.Frame(framer);
+            agent.Reset();
+            Assert.IsFalse(agent.WasFramed);
 
             agent.Attack(killer);
             agent.Reset();
@@ -212,7 +212,7 @@ namespace Subterfuge.Test
 
             agent.Execute();
             Assert.IsFalse(agent.IsAlive);
-            Assert.IsFalse(agent.WasKilled);
+            Assert.IsTrue(agent.WasKilled);
             Assert.IsNull(agent.Killer);
         }
 

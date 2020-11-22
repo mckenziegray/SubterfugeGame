@@ -95,13 +95,13 @@ namespace Subterfuge.Test
             blocker1.Target = Agent;
             foreach (Type agentType in GameService.AGENT_TYPES_ORDERED)
                 Game.Agents[agentType.Name].ActIfAble();
-            //Assert.IsTrue(Agent.Target == blocker1);
+            Assert.IsTrue(Agent.Target == blocker1);
             Assert.IsFalse(target.WasAttacked);
             Assert.IsFalse(target.Visitors.Contains(Agent.Codename));
             Assert.IsTrue(target.IsAlive);
             Assert.IsTrue(Agent.Target == blocker1);
             Assert.IsTrue(blocker1.WasAttacked);
-            //Assert.IsFalse(blocker1.Visitors.Contains(Agent.Codename));
+            Assert.IsFalse(blocker1.Visitors.Contains(Agent.Codename));
             Assert.IsFalse(blocker1.IsAlive);
             Game.Reset();
             Agent = (Android)Game.Agents[Agent.GetType().Name];
@@ -120,7 +120,7 @@ namespace Subterfuge.Test
             Assert.IsTrue(target.IsAlive);
             Assert.IsTrue(Agent.Target == blocker2);
             Assert.IsTrue(blocker2.WasAttacked);
-            //Assert.IsFalse(blocker2.Visitors.Contains(Agent.Codename));
+            Assert.IsFalse(blocker2.Visitors.Contains(Agent.Codename));
             Assert.IsFalse(blocker2.IsAlive);
             Game.Reset();
             Agent = (Android)Game.Agents[Agent.GetType().Name];
