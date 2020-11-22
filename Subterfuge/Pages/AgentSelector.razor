@@ -6,12 +6,12 @@
         <h2>Day @Game.Round</h2>
         <p>Select up to @GameService.MAX_AGENT_SELECTIONS @(GameService.MAX_AGENT_SELECTIONS == 1 ? "agent" : "agents") to assign.</p>
 
-        <TwoColumnGrid Items="Game.Agents.Allies">
+        <Grid NumColumns="2" Items="Game.Agents.Allies">
             <ItemTemplate>
                 @{
                     bool disabled = !context.IsAlive || (!context.IsActing && NumSelected >= GameService.MAX_AGENT_SELECTIONS);
                     <div class="btn-group-toggle" data-toggle="buttons">
-                        <label class="btn btn-block btn-outline-dark @(context.IsActing ? "active" : disabled ? "disabled" : "")">
+                        <label class="btn btn-block btn-outline-dark btn-height-double @(context.IsActing ? "active" : disabled ? "disabled" : "")">
                             <input type="checkbox"
                                    checked="@context.IsActing"
                                    disabled="@disabled"
@@ -23,11 +23,11 @@
                     </div>
                 }
             </ItemTemplate>
-        </TwoColumnGrid>
+        </Grid>
 
         <div class="row justify-content-center">
-            <div class="col">
-                <button class="btn btn-primary" @onclick="Continue">Confirm</button>
+            <div class="col-6 col-sm-5 col-md-3 col-lg-2">
+                <button class="btn btn-primary btn-block" @onclick="Continue">Confirm</button>
             </div>
         </div>
     </div>

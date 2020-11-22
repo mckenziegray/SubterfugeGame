@@ -6,15 +6,25 @@
         <h2>Day @Game.Round</h2>
         <p>Select the @Agent.Name's target.</p>
 
-        <TwoColumnGrid Items="Game.Agents.ShuffledList">
+        <Grid NumColumns="2" Items="Game.Agents.ShuffledList">
             <ItemTemplate>
-                <button @onclick="() => SetTarget(context)" class="btn btn-block btn-dark" disabled="@(!context.IsAlive)">@context.Codename</button>
+                <button type="button"
+                        class="btn btn-block btn-dark @(context.IsAlive ? "btn-height-double" : "")"
+                        @onclick="() => SetTarget(context)"
+                        disabled="@(!context.IsAlive)">
+                    @context.Codename
+                    @if (!context.IsAlive)
+                    {
+                        <br />
+                        <span class="muted">@context.Name</span>
+                    }
+                </button>
             </ItemTemplate>
-        </TwoColumnGrid>
+        </Grid>
 
         <div class="row justify-content-center">
-            <div class="col">
-                <button class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+            <div class="col-6 col-sm-5 col-md-3 col-lg-2">
+                <button class="btn btn-secondary btn-block" @onclick="Cancel">Cancel</button>
             </div>
         </div>
     </div>
