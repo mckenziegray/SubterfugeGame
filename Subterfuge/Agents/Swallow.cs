@@ -22,6 +22,7 @@ namespace Subterfuge.Agents
             {
                 // The Android is immune to being role-blocked and will instead try to kill the unit targeting it
                 // The Mastermind will do the same only if the Drudge is dead
+                Target.Visit(this);
                 Target.Target = this;
                 Target.IsActing = true;
             }
