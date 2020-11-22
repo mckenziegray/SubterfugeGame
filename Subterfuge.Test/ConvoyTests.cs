@@ -67,17 +67,11 @@ namespace Subterfuge.Test
             Assert.IsFalse(target.WasKilled);
             Assert.IsTrue(target.IsAlive);
             Assert.IsFalse(target.IsProtected);
-            //Assert.IsNull(target.Protector);
 
             Assert.IsFalse(Agent.WasAttacked);
-            //Assert.IsTrue(Agent.WasKilled);
+            Assert.IsTrue(Agent.WasKilled);
             Assert.IsFalse(Agent.IsAlive);
             Assert.AreSame(Agent.Killer, attacker);
-
-            Assert.IsFalse(attacker.WasAttacked);
-            //Assert.IsTrue(attacker.WasKilled);
-            //Assert.IsFalse(attacker.IsAlive);
-            //Assert.AreSame(attacker.Killer, Agent);
         }
     }
 }
