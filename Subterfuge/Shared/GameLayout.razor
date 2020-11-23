@@ -1,0 +1,70 @@
+﻿@inherits LayoutComponentBase
+@layout MainLayout
+@inject GameService Game
+
+<style>
+    #btn-evidence {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        z-index: 100;
+    }
+
+    /* Small */
+    @@media (min-width: 576px) {
+        #btn-evidence {
+            left: calc(100%/12 + 15px);
+        }
+    }
+
+    /* Medium */
+    @@media (min-width: 768px) {
+        #btn-evidence {
+            left: calc(100%/4 + 15px);
+        }
+    }
+
+    /* Large */
+    @@media (min-width: 992px) {
+        #btn-evidence {
+            left: calc(100%/3 + 15px);
+        }
+    }
+</style>
+
+@{
+    string evidenceModalId = "modal-evidence";
+}
+@if (Game.Evidence.Any())
+{
+    <Modal id="@evidenceModalId" DismissButtonText="Dismiss">
+        @foreach (string evidence in Game.Evidence[EvidenceIndex])
+        {
+            <p>@evidence</p>
+        }
+        <button type="button" class="btn btn-secondary" @onclick="() => ChangeEvidencePage(-1)" disabled="@(EvidenceIndex <= 0)">
+            <span class="oi oi-caret-left" title="Previous" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="btn btn-secondary" @onclick="() => ChangeEvidencePage(1)" disabled="@(EvidenceIndex >= Game.Evidence.Count - 1)">
+            <span class="oi oi-caret-right" title="Next" aria-hidden="true"></span>
+        </button>
+    </Modal>
+    <button type="button" id="btn-evidence" class="btn btn-secondary" data-toggle="modal" data-target="#@evidenceModalId">
+        <span class="oi oi-document" title="Evidence" aria-hidden="true"></span>
+    </button>
+}
+<div class="row justify-content-center">
+    <div class="col center-contents-horizontal">
+        <h2>Day @Game.Round</h2>
+        @Body
+    </div>
+</div>
+
+@code {
+    protected int EvidenceIndex { get; set; } = 0;
+
+    protected void ChangeEvidencePage(int change)
+    {
+        EvidenceIndex = Math.Clamp(EvidenceIndex + change, 0, Game.Evidence.Count - 1);
+    }
+}

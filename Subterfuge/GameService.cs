@@ -35,12 +35,14 @@ namespace Subterfuge
             typeof(Sleeper)
         };
 
-        public static Random Random { get; private set; } = new Random();
+        public List<List<string>> Evidence { get; protected set; } = new();
+
+        public static Random Random { get; private set; } = new();
 
         public int Round { get; protected set; }
         public AgentList Agents { get; protected set; }
 
-        private static readonly List<string> _generatedCodenames = new List<string>();
+        private static List<string> _generatedCodenames = new();
 
         public GameService()
         {
@@ -68,6 +70,8 @@ namespace Subterfuge
         {
             Round = 1;
             Agents = new AgentList();
+            Evidence.Clear();
+            _generatedCodenames.Clear();
         }
 
         public static string GenerateUniqueCodename()
