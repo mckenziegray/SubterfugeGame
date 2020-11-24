@@ -1,7 +1,7 @@
 ﻿@page  "/selectagents"
 
 <p>Select up to @GameService.MAX_AGENT_SELECTIONS @(GameService.MAX_AGENT_SELECTIONS == 1 ? "agent" : "agents") to assign.</p>
-<Grid NumColumns="2" Items="Game.Agents.Allies">
+<Grid NumColumns="2" Items="Game.Agents.PlayerAgents">
     <ItemTemplate>
         @{
             bool disabled = !context.IsAlive || (!context.IsActing && NumSelected >= GameService.MAX_AGENT_SELECTIONS);
@@ -27,7 +27,7 @@
 
 @code
 {
-    public int NumSelected => Game.Agents.Allies.Count(a => a.IsActing);
+    public int NumSelected => Game.Agents.PlayerAgents.Count(a => a.IsActing);
 
     protected void OnAgentCheckboxChanged(ChangeEventArgs e, Agent agent)
     {

@@ -5,7 +5,7 @@ using Subterfuge.Enums;
 
 namespace Subterfuge.Agents
 {
-    public class Android : Agent
+    public class Android : NonPlayerAgent
     {
         public override Allegiance Allegiance => Allegiance.Enemy;
         public override bool RequiresTarget => true;
@@ -18,11 +18,6 @@ namespace Subterfuge.Agents
         {
             if (Target.IsAlive && Target != this)
                 Target.Attack(this);
-        }
-
-        public override string GetReport()
-        {
-            throw new NotSupportedException();
         }
 
         public override void SelectTarget(AgentList agents)

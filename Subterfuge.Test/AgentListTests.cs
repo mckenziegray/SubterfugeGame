@@ -18,7 +18,7 @@ namespace Subterfuge.Test
             Assert.AreEqual(agentList.Count, agentList.OrderedList.Count);
             Assert.AreEqual(agentList.Count, agentList.ShuffledList.Count);
             int numAllies = GameService.AGENT_TYPES_ORDERED.Select(a => a.Instantiate<Agent>()).Where(a => a.Allegiance == Allegiance.Ally).Count();
-            Assert.AreEqual(numAllies, agentList.Allies.Count);
+            Assert.AreEqual(numAllies, agentList.PlayerAgents.Count);
 
             // Make sure all of the agent types are in each list exactly once
             foreach (Type type in GameService.AGENT_TYPES_ORDERED)
@@ -28,7 +28,7 @@ namespace Subterfuge.Test
                 Assert.DoesNotThrow(() => agentList.ShuffledList.Single(a => a.GetType() == type));
 
                 if (type.Instantiate<Agent>().Allegiance == Allegiance.Ally)
-                    Assert.DoesNotThrow(() => agentList.Allies.Single(a => a.GetType() == type));
+                    Assert.DoesNotThrow(() => agentList.PlayerAgents.Single(a => a.GetType() == type));
             }
 
             // Make sure the shuffled list is actually shuffled

@@ -3,9 +3,16 @@ using Subterfuge.Enums;
 
 namespace Subterfuge.Agents
 {
-    public class Medic : Agent
+    public class Medic : PlayerAgent
     {
-        public override Allegiance Allegiance => Allegiance.Ally;
+        protected enum MedicReportType
+        {
+            Attacked,
+            NotAttacked,
+            Blocked,
+            SelfIdentify
+        }
+
         public override bool RequiresTarget => true;
 
         public Medic() : base() { }
@@ -18,20 +25,35 @@ namespace Subterfuge.Agents
 
         public override string GetReport()
         {
-            string report = $"I got your orders to look after {Target.Codename}.";
-            if (!Target.IsAlive || IsBlocked)
-                report += " Unfortunately, I was unable to perform my duties. Sorry.";
-            else if (Target.WasAttacked)
-                report += $" {Target.Gender.ToCommonPronoun()} was attacked but is alive and recovering.";
-            else
-                report += " Thankfully, my services were not required.";
-
-            return report;
+            return $"I got your orders to look after {Target.Codename}." + GetMedicReportType() switch
+            {
+                MedicReportType.Blocked => " Unfortunately, I was unable to perform my duties. Sorry.",
+                MedicReportType.Attacked => $" {Target.Gender.ToCommonPronoun()} was attacked but is alive and recovering.",
+                MedicReportType.NotAttacked => " Thankfully, my services were not required.",
+                _ => throw new NotImplementedException()
+            };
         }
 
-        public override void SelectTarget(AgentList agents)
+        public override ReportType GetReportType()
         {
-            throw new NotSupportedException();
+            return GetMedicReportType() switch
+            {
+                MedicReportType.Attacked or
+                MedicReportType.NotAttacked     => ReportType.Action,
+                MedicReportType.Blocked         => ReportType.Blocked,
+                MedicReportType.SelfIdentify    => ReportType.SelfIdentify,
+                _ => throw new NotImplementedException()
+            };
+        }
+
+        protected MedicReportType GetMedicReportType()
+        {
+            if (!Target.IsAlive || IsBlocked)
+                return MedicReportType.Blocked;
+            else if (Target.WasAttacked)
+                return MedicReportType.Attacked;
+            else
+                return MedicReportType.NotAttacked;
         }
     }
 }

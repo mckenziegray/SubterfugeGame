@@ -42,10 +42,10 @@
         ExecutedAgent.Execute();
 
         // If the sleeper dies, they take someone down with them
-        if (ExecutedAgent is Sleeper)
+        if (ExecutedAgent is Sleeper sleeper)
         {
-            ExecutedAgent.SelectTarget(Game.Agents);
-            ExecutedAgent.Target.Execute();
+            sleeper.SelectTarget(Game.Agents);
+            sleeper.Target.Execute();
         }
     }
 }

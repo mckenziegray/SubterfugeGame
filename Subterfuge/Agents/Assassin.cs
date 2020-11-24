@@ -3,9 +3,8 @@ using Subterfuge.Enums;
 
 namespace Subterfuge.Agents
 {
-    public class Assassin : Agent
+    public class Assassin : PlayerAgent
     {
-        public override Allegiance Allegiance => Allegiance.Ally;
         public override bool RequiresTarget => true;
 
         public Assassin() : base() { }
@@ -18,18 +17,17 @@ namespace Subterfuge.Agents
 
         public override string GetReport()
         {
-            string report;
-            if (Target.Killer == this)
-                report = $"Orders received. Target neutralized.";
-            else
-                report = $"Mission compromised. Standing by for further orders.";
-
-            return report;
+            return GetReportType() switch
+            {
+                ReportType.Action => $"Orders received. Target neutralized.",
+                ReportType.Blocked => $"Mission compromised. Standing by for further orders.",
+                _ => throw new NotImplementedException()
+            };
         }
 
-        public override void SelectTarget(AgentList agents)
+        public override ReportType GetReportType()
         {
-            throw new NotSupportedException();
+            return Target.Killer == this ? ReportType.Action : ReportType.Blocked;
         }
     }
 }

@@ -7,7 +7,7 @@
         <h3>Reports</h3>
         <div class="reports row">
             <div class="col-12">
-                @foreach (Agent agent in Game.Agents.Allies.Where(a => a.IsAlive && a.IsActing))
+                @foreach (PlayerAgent agent in Game.Agents.PlayerAgents.Where(a => a.IsAlive && a.IsActing))
                 {
                     <h4>@agent.Name's Report</h4>
                     <p>@agent.GetReport()</p>

@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Linq;
 using Subterfuge.Enums;
 
 namespace Subterfuge.Agents
 {
-    public class Sentry : Agent
+    public class Sentry : PlayerAgent
     {
-        public override Allegiance Allegiance => Allegiance.Ally;
         public override bool RequiresTarget => true;
 
         public Sentry() : base() { }
@@ -17,20 +17,33 @@ namespace Subterfuge.Agents
 
         public override string GetReport()
         {
-            string report = $"I got your request to keep an eye on {Target.Codename}'s quarters for the night";
-            if (IsBlocked)
-                report += $" but something else came up. Sorry.";
-            else if (Target.Visitors.Count == 0)
-                report += $". {Target.Gender.ToCommonPronoun()} had no visitors.";
-            else
-                report += $". {Target.Gender.ToCommonPronoun()} had {Target.Visitors.Count} {(Target.Visitors.Count == 1 ? "visitor" : "visitors")}: {string.Join(", ", Target.Visitors)}";
-            
-            return report;
+            return $"I got your request to keep an eye on {Target.Codename}'s quarters for the night" + GetReportType() switch
+            {
+                ReportType.Action => $". {Target.Gender.ToCommonPronoun()} had" +
+                    (Target.Visitors.Count == 0
+                    ? " no visitors."
+                    : $" {Target.Visitors.Count} {(Target.Visitors.Count == 1 ? "visitor" : "visitors")}: {string.Join(", ", Target.Visitors)}."),
+                ReportType.Blocked => $" but something else came up. Sorry.",
+                _ => throw new NotImplementedException()
+            };
         }
 
-        public override void SelectTarget(AgentList agents)
+        protected override string GetReportConciseAction()
         {
-            throw new NotSupportedException();
+            return $" {Target.Codename} was visited by" + Target.Visitors.Count switch
+            {
+                0 => " no one.",
+                1 => $" {Target.Visitors.Single()}.",
+                _ => $": {string.Join(", ", Target.Visitors)}."
+            };
+        }
+
+        public override ReportType GetReportType()
+        {
+            if (IsBlocked)
+                return ReportType.Blocked;
+            else
+                return ReportType.Action;
         }
     }
 }

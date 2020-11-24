@@ -32,11 +32,10 @@
     }
 </style>
 
-@{
-    string evidenceModalId = "modal-evidence";
-}
 @if (Game.Evidence.Any())
 {
+    string evidenceModalId = "modal-evidence";
+
     <Modal id="@evidenceModalId" DismissButtonText="Dismiss">
         @foreach (string evidence in Game.Evidence[EvidenceIndex])
         {
@@ -61,7 +60,12 @@
 </div>
 
 @code {
-    protected int EvidenceIndex { get; set; } = 0;
+    protected int EvidenceIndex { get; set; }
+
+    protected override void OnInitialized()
+    {
+        EvidenceIndex = Game.Evidence.Count - 1;
+    }
 
     protected void ChangeEvidencePage(int change)
     {

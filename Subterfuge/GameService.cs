@@ -53,15 +53,48 @@ namespace Subterfuge
         {
             foreach (Agent agent in Agents.OrderedList)
             {
-                if (agent.Allegiance != Allegiance.Ally)
-                    agent.SelectTarget(Agents);
+                if (agent is NonPlayerAgent npc)
+                    npc.SelectTarget(Agents);
 
                 agent.ActIfAble();
             }
+
+            #region Populate initial evidence
+            List<string> roundEvidence = new List<string>();
+
+            foreach (Agent agent in Agents.PlayerAgents.Where(a => a.IsActing))
+            {
+                string action = agent switch
+                {
+                    Assassin => $"kill",
+                    Convoy or Medic => "protect",
+                    Hacker or Interrogator => "investigate",
+                    Marshal or Swallow => "block",
+                    Sentry => "watch",
+                    _ => throw new NotImplementedException()
+                };
+                roundEvidence.Add($"You ordered the {agent.Name} to {action} {agent.Target.Codename}.");
+            }
+
+            foreach (PlayerAgent agent in Agents.PlayerAgents.Where(a => a.IsActing && a.IsAlive))
+                roundEvidence.Add(agent.GetReportConcise());
+
+            foreach (Agent agent in Agents.OrderedList.Where(a => a.WasKilled))
+                roundEvidence.Add($"The {agent.Killer.Name} killed the {agent.Name} ({agent.Codename}).");
+
+            Evidence.Add(roundEvidence);
+            #endregion
         }
 
         public void EndRound()
         {
+            // This block is meant as a fail-safe and should never actually be hit.
+            while (Evidence.Count < Round - 1)
+                Evidence.Add(new List<string>());
+
+            foreach (Agent agent in Agents.OrderedList.Where(a => a.WasExecuted))
+                Evidence[Round - 1].Add($"You executed the {agent.Name} ({agent.Codename}).");
+            
             ++Round;
             Agents.OrderedList.ForEach(a => a.Reset());
         }
