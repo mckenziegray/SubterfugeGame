@@ -11,7 +11,7 @@ namespace Subterfuge.Agents
 
         protected override void Act()
         {
-            if (Target.IsAlive && Target != this)
+            if (Target.IsAlive && Target != this && Target is not Mastermind or Android or Sleeper)
                 Target.Attack(this);
         }
 
