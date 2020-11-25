@@ -34,11 +34,5 @@ namespace Subterfuge.Test
         {
             Assert.AreEqual(true, Agent.RequiresTarget);
         }
-
-        [Test]
-        public void TestSelectTarget()
-        {
-            Assert.Throws<NotSupportedException>(() => Agent.SelectTarget(Game.Agents));
-        }
     }
 }

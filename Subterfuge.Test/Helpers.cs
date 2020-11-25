@@ -68,8 +68,8 @@ namespace Subterfuge.Test
 
         public static void TestBlockAction(Agent blocker, GameService game)
         {
-            Agent target = game.Agents[nameof(Drudge)];
-            Agent targetTarget = game.Agents[nameof(Android)];
+            NonPlayerAgent target = (NonPlayerAgent)game.Agents[nameof(Drudge)];
+            NonPlayerAgent targetTarget = (NonPlayerAgent)game.Agents[nameof(Android)];
 
             blocker.IsActing = true;
             blocker.Target = target;
