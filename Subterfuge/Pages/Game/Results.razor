@@ -1,0 +1,44 @@
+﻿@page "/results"
+@inherits RoundEnder
+
+<br />
+<div class="row justify-content-center">
+    <div class="col-12 col-sm-12 col-md-9 col-lg-6">
+        <h3>Reports</h3>
+        <div class="reports row">
+            <div class="col-12">
+                @foreach (PlayerAgent agent in Game.Agents.PlayerAgents.Where(a => a.IsAlive && a.IsActing))
+                {
+                    <h4>@agent.Name's Report</h4>
+                    <p>@agent.GetReport()</p>
+                }
+            </div>
+        </div>
+        <h3>Casualties</h3>
+        <div class="row">
+            <div class="col-12">
+                @{
+                    IEnumerable<Agent> casualties = Game.Agents.ShuffledList.Where(a => a.WasKilled);
+                    foreach (Agent agent in casualties)
+                    {
+                        <p>Agent @agent.Codename was killed by the @agent.Killer.Name. @agent.Gender.ToCommonPronoun() was the @agent.Name.</p>
+                    }
+
+                    if (!casualties.Any())
+                    {
+                        <p>No casualties reported.</p>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<button class="btn btn-primary" @onclick="Continue">Continue</button>
+
+@code {
+    protected void Continue()
+    {
+        Nav.NavigateTo("/execute");
+    }
+}

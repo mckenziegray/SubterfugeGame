@@ -1,0 +1,46 @@
+﻿@page  "/execute"
+@inherits RoundEnder
+
+<p>You may choose to execute one agent to execute.</p>
+<Grid NumColumns="2" Items="Game.Agents.ShuffledList">
+    <ItemTemplate>
+        @{
+            string modalId = $"modal-execute-{context.Name}";
+
+            if (context.IsAlive)
+            {
+                <Modal id="@modalId"
+                       ConfirmButtonText="Confirm"
+                       DismissButtonText="Never Mind"
+                       ConfirmButtonClickedCallback="e => Execute(context)">
+                    <p>Are you sure you want to execute @context.Codename?</p>
+                </Modal>
+            }
+        }
+        <button type="button"
+                class="btn btn-block btn-dark @(context.IsAlive ? "btn-height-double" : "")"
+                data-toggle="modal"
+                data-target="#@modalId"
+                disabled="@(!context.IsAlive)">
+            @context.Codename
+            @if (!context.IsAlive)
+            {
+                <br />
+                <span class="muted">@context.Name</span>
+            }
+        </button>
+    </ItemTemplate>
+</Grid>
+<div class="row justify-content-center">
+    <div class="col-6 col-sm-5 col-md-3 col-lg-2">
+        <button class="btn btn-secondary btn-block" @onclick="EndRound">Skip Execution</button>
+    </div>
+</div>
+
+@code
+{
+    protected void Execute(Agent agent)
+    {
+        Nav.NavigateTo($"/execute/{agent.Codename}");
+    }
+}

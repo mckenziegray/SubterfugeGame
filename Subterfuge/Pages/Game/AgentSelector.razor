@@ -1,0 +1,57 @@
+﻿@page  "/selectagents"
+
+<p>Select up to @GameService.MAX_AGENT_SELECTIONS @(GameService.MAX_AGENT_SELECTIONS == 1 ? "agent" : "agents") to assign.</p>
+<Grid NumColumns="2" Items="Game.Agents.PlayerAgents">
+    <ItemTemplate>
+        @{
+            bool disabled = !context.IsAlive || (!context.IsActing && NumSelected >= GameService.MAX_AGENT_SELECTIONS);
+            <div class="btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-block btn-outline-dark btn-height-double @(context.IsActing ? "active" : disabled ? "disabled" : "")">
+                    <input type="checkbox"
+                           checked="@context.IsActing"
+                           disabled="@disabled"
+                           @onchange="e => OnAgentCheckboxChanged(e, context)"
+                           @onchange:preventDefault
+                           autocomplete="off" />
+                    @context.Name
+                </label>
+            </div>
+        }
+    </ItemTemplate>
+</Grid>
+<div class="row justify-content-center">
+    <div class="col-6 col-sm-5 col-md-3 col-lg-2">
+        <button class="btn btn-primary btn-block" @onclick="Continue">Confirm</button>
+    </div>
+</div>
+
+@code
+{
+    public int NumSelected => Game.Agents.PlayerAgents.Count(a => a.IsActing);
+
+    protected void OnAgentCheckboxChanged(ChangeEventArgs e, Agent agent)
+    {
+        bool isChecked = (bool)e.Value;
+
+        if (isChecked)
+        {
+            if (agent.IsAlive && NumSelected < GameService.MAX_AGENT_SELECTIONS)
+            {
+                if (agent.RequiresTarget)
+                    Nav.NavigateTo($"/selecttarget/{agent.GetType().Name}");
+                else
+                    agent.IsActing = true;
+            }
+        }
+        else
+        {
+            agent.Reset();
+        }
+    }
+
+    protected void Continue()
+    {
+        Game.PlayRound();
+        Nav.NavigateTo("/results");
+    }
+}

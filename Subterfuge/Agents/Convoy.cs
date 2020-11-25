@@ -3,9 +3,8 @@ using Subterfuge.Enums;
 
 namespace Subterfuge.Agents
 {
-    public class Convoy : Agent
+    public class Convoy : PlayerAgent
     {
-        public override Allegiance Allegiance => Allegiance.Ally;
         public override bool RequiresTarget => true;
 
         public Convoy() : base() { }
@@ -18,18 +17,21 @@ namespace Subterfuge.Agents
 
         public override string GetReport()
         {
-            string report = $"I received your orders to protect {Target.Codename}.";
-            if (IsBlocked)
-                report += " However, I was preocupied. My apologies.";
-            else
-                report += $" The night was uneventful, and {Target.Gender.ToCommonPronoun().ToLower()} was not harmed.";
-
-            return report;
+            return $"I received your orders to protect {Target.Codename}."
+                + GetReportType() switch
+                {
+                    ReportType.Action => $" The night was uneventful, and {Target.Gender.ToCommonPronoun().ToLower()} was not harmed.",
+                    ReportType.Blocked => " However, I was preocupied. My apologies.",
+                    _ => throw new NotImplementedException()
+                };
         }
 
-        public override void SelectTarget(AgentList agents)
+        public override ReportType GetReportType()
         {
-            throw new NotSupportedException();
+            if (Target == this || IsBlocked)
+                return ReportType.Blocked;
+            else
+                return ReportType.Action;
         }
     }
 }

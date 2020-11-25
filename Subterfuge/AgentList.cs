@@ -12,7 +12,7 @@ namespace Subterfuge
 
         public List<Agent> OrderedList { get; protected set; }
         public List<Agent> ShuffledList { get; protected set; }
-        public List<Agent> Allies { get; protected set; }
+        public List<PlayerAgent> PlayerAgents { get; protected set; }
 
         public int Count => Dictionary.Count;
 
@@ -23,7 +23,7 @@ namespace Subterfuge
             OrderedList = new();
             ShuffledList = new();
             Dictionary = new();
-            Allies = new();
+            PlayerAgents = new();
 
             foreach (Type type in GameService.AGENT_TYPES_ORDERED)
             {
@@ -33,8 +33,8 @@ namespace Subterfuge
                 ShuffledList.Add(agent);
                 Dictionary.Add(type.Name, agent);
 
-                if (agent.Allegiance == Allegiance.Ally)
-                    Allies.Add(agent);
+                if (agent is PlayerAgent playerAgent)
+                    PlayerAgents.Add(playerAgent);
             }
 
             ShuffledList.Shuffle(GameService.Random);

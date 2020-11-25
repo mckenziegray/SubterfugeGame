@@ -1,0 +1,37 @@
+﻿@typeparam TItem
+
+@for (int i = 0; i < Items.Count; i += NumColumns)
+{
+    <div class="row justify-content-center">
+        <div class="col-sm-1 col-md-3 col-lg-4"></div>
+        @for (int j = i; j <= i + NumColumns - 1; j++)
+        {
+            <div class="col">
+                @if (j < Items.Count)
+                {
+                    @ItemTemplate(Items[j]);
+                }
+            </div>
+        }
+        <div class="col-sm-1 col-md-3 col-lg-4"></div>
+    </div>
+}
+
+@code { 
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (NumColumns <= 0)
+            throw new ArgumentOutOfRangeException(nameof(NumColumns));
+    }
+
+    [Parameter]
+    public int NumColumns { get; set; }
+
+    [Parameter]
+    public RenderFragment<TItem> ItemTemplate { get; set; }
+
+    [Parameter]
+    public IReadOnlyList<TItem> Items { get; set; }
+}

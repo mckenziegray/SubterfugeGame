@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Subterfuge.Enums;
 
 namespace Subterfuge.Agents
 {
-    public class Sleeper : Agent
+    public class Sleeper : NonPlayerAgent
     {
         public override Allegiance Allegiance => Allegiance.Neutral;
         public override bool RequiresTarget => true;
@@ -15,11 +14,6 @@ namespace Subterfuge.Agents
         protected override void Act()
         {
             // Does nothing
-        }
-
-        public override string GetReport()
-        {
-            throw new NotSupportedException();
         }
 
         public override void SelectTarget(AgentList agents)

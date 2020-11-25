@@ -3,9 +3,8 @@ using Subterfuge.Enums;
 
 namespace Subterfuge.Agents
 {
-    public class Marshal : Agent
+    public class Marshal : PlayerAgent
     {
-        public override Allegiance Allegiance => Allegiance.Ally;
         public override bool RequiresTarget => true;
 
         public Marshal() : base() { }
@@ -29,20 +28,23 @@ namespace Subterfuge.Agents
 
         public override string GetReport()
         {
-            string report;
-            if (Target == this)
-                report = $"Sorry, boss; {Target.Codename} is me. I could lock myself up, but it wouldn't do much good since I have the key.";
-            else if (Target.Blocker == this)
-                report = $"As requested, {Target.Codename} was detained all night.";
-            else
-                report = $"Regrettably, I was unable to hold {Target.Codename} overnight.";
-
-            return report;
+            return GetReportType() switch
+            {
+                ReportType.Action => $"As requested, {Target.Codename} was detained all night.",
+                ReportType.Blocked => $"Regrettably, I was unable to hold {Target.Codename} overnight.",
+                ReportType.SelfIdentify => $"Sorry, boss; {Target.Codename} is me. I could lock myself up, but it wouldn't do much good since I have the key.",
+                _ => throw new NotImplementedException()
+            };
         }
 
-        public override void SelectTarget(AgentList agents)
+        public override ReportType GetReportType()
         {
-            throw new NotSupportedException();
+            if (Target == this)
+                return ReportType.SelfIdentify;
+            else if (Target.Blocker == this)
+                return ReportType.Action;
+            else
+                return ReportType.Blocked;
         }
     }
 }

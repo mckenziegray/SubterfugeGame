@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Subterfuge.Enums;
 using Subterfuge.Exceptions;
 
@@ -34,9 +35,10 @@ namespace Subterfuge.Agents
         /// The agent who killed this agent
         /// </summary>
         public Agent Killer { get; protected set; }
+        public bool WasFramed { get; protected set; }
         public bool WasAttacked { get; protected set; }
         public bool WasKilled { get; protected set; }
-        public bool WasFramed { get; protected set; }
+        public bool WasExecuted => WasKilled && Killer is null;
         public bool IsBlocked => Blocker?.IsAlive == true;
         public bool IsProtected => Protector != null && Protector.IsAlive && !Protector.IsBlocked;
         public abstract bool RequiresTarget { get; }
@@ -126,29 +128,10 @@ namespace Subterfuge.Agents
             }
         }
 
-        public abstract void SelectTarget(AgentList agents);
-
         /// <summary>
         /// Causes the unit to perform their action.
         /// </summary>
         protected abstract void Act();
-
-        /// <summary>
-        /// Gets the unit's report. Only works for allied units.
-        /// </summary>
-        /// <returns>A string containing the report.</returns>
-        /// <remarks>
-        /// Unit            Self-targets    Self-identifies
-        /// Assassin        No              No
-        /// Convoy          Yes             No
-        /// Hacker          No              Yes
-        /// Interrogator    No              Yes
-        /// Marshal         No              Yes
-        /// Medic           No              No
-        /// Sentry          Yes             No
-        /// Swallow/Raven   No              Yes
-        /// </remarks>
-        public abstract string GetReport();
 
         public void Reset()
         {

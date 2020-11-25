@@ -3,7 +3,7 @@ using Subterfuge.Enums;
 
 namespace Subterfuge.Agents
 {
-    public class Swallow : Agent
+    public class Swallow : PlayerAgent
     {
         public override Allegiance Allegiance => Allegiance.Ally;
         public override bool RequiresTarget => true;
@@ -35,20 +35,30 @@ namespace Subterfuge.Agents
 
         public override string GetReport()
         {
-            string report = $"I received your orders to carry out the \"special\" operation with {Target.Codename}.";
-            if (Target == this)
-                report += " Actually, that's me. But don't worry, I kept myself entertained.";
-            else if (Target.Blocker == this)
-                report += $" The mission was a success. {Target.Gender.ToCommonPronoun()} was tied up all night.";
-            else
-                report += " I'm sorry to say that I was unsuccessful.";
+            if (Target is null)
+                throw new ArgumentNullException(nameof(Target));
 
-            return report;
+            return $"I received your orders to carry out the \"special\" operation with {Target.Codename}."
+                + GetReportType() switch
+                {
+                    ReportType.Action => $" The mission was a success. {Target.Gender.ToCommonPronoun()} was tied up all night.",
+                    ReportType.Blocked => " I'm sorry to say that I was unsuccessful.",
+                    ReportType.SelfIdentify => " Actually, that's me. But don't worry, I kept myself entertained.",
+                    _ => throw new NotImplementedException()
+                };
         }
 
-        public override void SelectTarget(AgentList agents)
+        public override ReportType GetReportType()
         {
-            throw new NotSupportedException();
+            if (Target is null)
+                throw new ArgumentNullException(nameof(Target));
+
+            if (Target == this)
+                return ReportType.SelfIdentify;
+            else if (Target.Blocker == this)
+                return ReportType.Action;
+            else
+                return ReportType.Blocked;
         }
     }
 }
