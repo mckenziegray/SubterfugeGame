@@ -9,6 +9,9 @@ namespace Subterfuge.Agents
         public override Allegiance Allegiance => Allegiance.Enemy;
         public override bool RequiresTarget => true;
 
+        /// <summary>
+        /// The chance that this agent will try to act on any given round.
+        /// </summary>
         private const double CHANCE_TO_ATTACK = 0.9;
 
         public Mastermind() : base() { }

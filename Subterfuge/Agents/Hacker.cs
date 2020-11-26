@@ -39,7 +39,7 @@ namespace Subterfuge.Agents
             };
         }
 
-        protected override string GetReportConciseAction()
+        protected override string GetReportBriefAction()
         {
             return $" {Target.Codename}" + GetHackerReportType() switch
             {
@@ -50,7 +50,7 @@ namespace Subterfuge.Agents
             };
         }
 
-        public override ReportType GetReportType()
+        protected override ReportType GetReportType()
         {
             return GetHackerReportType() switch
             {

@@ -11,7 +11,7 @@ namespace Subterfuge.Agents
         public override Allegiance Allegiance => Allegiance.Ally;
 
         /// <summary>
-        /// Gets the unit's report. Only works for allied units.
+        /// Gets this agent's full report for the round.
         /// </summary>
         /// <returns>A string containing the report.</returns>
         /// <remarks>
@@ -27,19 +27,28 @@ namespace Subterfuge.Agents
         /// </remarks>
         public abstract string GetReport();
 
-        public string GetReportConcise()
+        /// <summary>
+        /// Gets a short version of this agent's report for the round.
+        /// </summary>
+        /// <returns>The brief.</returns>
+        public string GetReportBrief()
         {
             return $"The {Name} reported that"
                 + GetReportType() switch
                 {
-                    ReportType.Action => GetReportConciseAction(),
+                    ReportType.Action => GetReportBriefAction(),
                     ReportType.Blocked => $" they were unable to act.",
                     ReportType.SelfIdentify => $" they are {Codename}.",
                     _ => throw new NotImplementedException()
                 };
         }
 
-        protected virtual string GetReportConciseAction()
+        /// <summary>
+        /// Gets the latter part of the short version of this agent's report for the round if they acted.
+        /// </summary>
+        /// <returns>The partial brief.</returns>
+        /// <remarks>This method MUST be overridden by most children.</remarks>
+        protected virtual string GetReportBriefAction()
         {
             string action = this switch
             {
@@ -52,6 +61,10 @@ namespace Subterfuge.Agents
             return $" {Target.Codename} was {action}.";
         }
 
-        public abstract ReportType GetReportType();
+        /// <summary>
+        /// Gets the type of report to be returned by this agent this round.
+        /// </summary>
+        /// <returns>The report type.</returns>
+        protected abstract ReportType GetReportType();
     }
 }

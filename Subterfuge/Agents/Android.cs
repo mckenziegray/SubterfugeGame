@@ -10,15 +10,12 @@ namespace Subterfuge.Agents
         public override Allegiance Allegiance => Allegiance.Enemy;
         public override bool RequiresTarget => true;
 
+        /// <summary>
+        /// The chance that this agent will try to act on any given round.
+        /// </summary>
         private const double CHANCE_TO_ATTACK = 0.95;
 
         public Android() : base() { }
-
-        protected override void Act()
-        {
-            if (Target.IsAlive && Target != this)
-                Target.Attack(this);
-        }
 
         public override void SelectTarget(AgentList agents)
         {
@@ -32,6 +29,12 @@ namespace Subterfuge.Agents
                     IsActing = true;
                 }
             }
+        }
+
+        protected override void Act()
+        {
+            if (Target.IsAlive && Target != this)
+                Target.Attack(this);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Subterfuge.Agents
             };
         }
 
-        public override ReportType GetReportType()
+        protected override ReportType GetReportType()
         {
             return Target.Killer == this ? ReportType.Action : ReportType.Blocked;
         }

@@ -9,15 +9,16 @@ namespace Subterfuge
     {
         // NOTE: This key must be the name of the class without any namespace. This can be obtained using nameof(AgentClass) or AgentInstance.GetType().Name
         public Agent this[string key] => Dictionary[key];
-
+        public int Count => Dictionary.Count;
         public List<Agent> OrderedList { get; protected set; }
         public List<Agent> ShuffledList { get; protected set; }
         public List<PlayerAgent> PlayerAgents { get; protected set; }
 
-        public int Count => Dictionary.Count;
-
         protected Dictionary<string, Agent> Dictionary { get; set; }
 
+        /// <summary>
+        /// Initializes the list and populates it with one agent of each type.
+        /// </summary>
         public AgentList()
         {
             OrderedList = new();

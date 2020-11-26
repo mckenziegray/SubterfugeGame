@@ -6,9 +6,9 @@ namespace Subterfuge.Agents
 {
     public class Cutout : NonPlayerAgent
     {
+        public override string Name => "Cut-out";
         public override Allegiance Allegiance => Allegiance.Neutral;
         public override bool RequiresTarget => true;
-        public override string Name => "Cut-out";
 
         public Cutout() : base() { }
 

@@ -34,7 +34,7 @@ namespace Subterfuge.Agents
             };
         }
 
-        public override ReportType GetReportType()
+        protected override ReportType GetReportType()
         {
             return GetMedicReportType() switch
             {

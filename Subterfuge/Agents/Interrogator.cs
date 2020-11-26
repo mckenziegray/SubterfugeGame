@@ -62,7 +62,7 @@ namespace Subterfuge.Agents
             return report;
         }
 
-        protected override string GetReportConciseAction()
+        protected override string GetReportBriefAction()
         {
             InterrogatorReportType interrogatorReportType = GetInterrogatorReportType();
             return interrogatorReportType switch
@@ -81,7 +81,7 @@ namespace Subterfuge.Agents
             };
         }
 
-        public override ReportType GetReportType()
+        protected override ReportType GetReportType()
         {
             return GetInterrogatorReportType() switch
             {

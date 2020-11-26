@@ -45,6 +45,11 @@ namespace Subterfuge
             }
         }
 
+        /// <summary>
+        /// Returns the common pronoun (capitalized) corresponding to the given gender.
+        /// </summary>
+        /// <param name="source">The gender.</param>
+        /// <returns>She, He, or They</returns>
         public static string ToCommonPronoun(this Gender source)
         {
             return source switch
@@ -55,6 +60,11 @@ namespace Subterfuge
             };
         }
 
+        /// <summary>
+        /// Returns the objective pronoun (capitalized) corresponding to the given gender.
+        /// </summary>
+        /// <param name="source">The gender.</param>
+        /// <returns>Her, Him, or Them</returns>
         public static string ToObjectivePronoun(this Gender source)
         {
             return source switch
@@ -65,6 +75,11 @@ namespace Subterfuge
             };
         }
 
+        /// <summary>
+        /// Returns the possessive pronoun (capitalized) corresponding to the given gender.
+        /// </summary>
+        /// <param name="source">The gender.</param>
+        /// <returns>Her, His, or Their</returns>
         public static string ToPossessivePronoun(this Gender source)
         {
             return source switch
@@ -75,6 +90,11 @@ namespace Subterfuge
             };
         }
 
+        /// <summary>
+        /// Returns the possessive plural pronoun (capitalized) corresponding to the given gender.
+        /// </summary>
+        /// <param name="source">The gender.</param>
+        /// <returns>Hers, His, or Theirs</returns>
         public static string ToPossessivePluralPronoun(this Gender source)
         {
             return source switch
