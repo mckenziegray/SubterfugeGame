@@ -26,7 +26,7 @@ namespace Subterfuge.Agents
                 Target.Target = this;
                 Target.IsActing = true;
             }
-            else if (Target.IsAlive && Target != this)
+            else if (Target.IsActive && Target != this)
             {
                 Target.Block(this);
                 Target.Protect(this);

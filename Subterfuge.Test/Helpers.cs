@@ -20,7 +20,7 @@ namespace Subterfuge.Test
             killer.ActIfAble();
             Assert.IsTrue(killer.Target.WasAttacked);
             Assert.IsTrue(killer.Target.Visitors.Contains(killer.Codename));
-            Assert.IsTrue(killer.Target.IsAlive);
+            Assert.IsTrue(killer.Target.IsActive);
             killer.Target.Reset();
             killer.Reset();
 
@@ -30,7 +30,7 @@ namespace Subterfuge.Test
             killer.ActIfAble();
             Assert.IsTrue(killer.Target.WasAttacked);
             Assert.IsTrue(killer.Target.Visitors.Contains(killer.Codename));
-            Assert.IsFalse(killer.Target.IsAlive);
+            Assert.IsFalse(killer.Target.IsActive);
         }
 
         public static void TestProtectAction(Agent protector, GameService game, bool protectorShouldDie)
@@ -56,13 +56,13 @@ namespace Subterfuge.Test
 
             Assert.IsTrue(target.WasAttacked);
             Assert.IsFalse(target.WasKilled);
-            Assert.IsTrue(target.IsAlive);
+            Assert.IsTrue(target.IsActive);
             Assert.AreEqual(!protectorShouldDie, target.IsProtected);
             Assert.IsTrue(target.Visitors.Contains(protector.Codename));
 
             Assert.IsFalse(protector.WasAttacked);
             Assert.AreEqual(protectorShouldDie, protector.WasKilled);
-            Assert.AreEqual(!protectorShouldDie, protector.IsAlive);
+            Assert.AreEqual(!protectorShouldDie, protector.IsActive);
             Assert.IsTrue(protectorShouldDie ? protector.Killer == attacker : protector.Killer is null);
         }
 
@@ -133,19 +133,19 @@ namespace Subterfuge.Test
 
             Assert.IsFalse(target.Visitors.Contains(killer.Codename));
             Assert.IsFalse(target.WasAttacked);
-            Assert.IsTrue(target.IsAlive);
+            Assert.IsTrue(target.IsActive);
 
             Assert.IsFalse(blocker.Visitors.Contains(killer.Codename));
             if (shouldKill)
             {
                 Assert.AreSame(blocker, killer.Target);
-                Assert.IsFalse(blocker.IsAlive);
+                Assert.IsFalse(blocker.IsActive);
                 Assert.IsTrue(blocker.WasKilled);
                 Assert.AreSame(killer, blocker.Killer);
             }
             else
             {
-                Assert.IsTrue(blocker.IsAlive);
+                Assert.IsTrue(blocker.IsActive);
                 Assert.IsFalse(blocker.WasKilled);
                 Assert.IsNull(blocker.Killer);
             }

@@ -64,7 +64,7 @@ namespace Subterfuge.Agents
 
         protected HackerReportType GetHackerReportType()
         {
-            if (!Target.IsAlive || IsBlocked)
+            if (!Target.IsActive || IsBlocked)
                 return HackerReportType.Blocked;
             else if(Target is Android)
                 return HackerReportType.Android;

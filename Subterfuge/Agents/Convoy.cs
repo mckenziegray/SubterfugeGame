@@ -11,7 +11,7 @@ namespace Subterfuge.Agents
 
         protected override void Act()
         {
-            if (Target.IsAlive)
+            if (Target.IsActive)
                 Target.Protect(this, true);
         }
 

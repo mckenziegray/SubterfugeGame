@@ -19,7 +19,7 @@ namespace Subterfuge.Test
             {
                 Agent agent = agentType.Instantiate<Agent>();
 
-                Assert.IsTrue(agent.IsAlive);
+                Assert.IsTrue(agent.IsActive);
                 Assert.IsFalse(agent.IsActing);
                 Assert.IsFalse(agent.IsBlocked);
                 Assert.IsFalse(agent.IsProtected);
@@ -117,7 +117,7 @@ namespace Subterfuge.Test
             agent.Reset();
             Assert.IsFalse(agent.WasAttacked);
             Assert.IsFalse(agent.WasKilled);
-            Assert.IsFalse(agent.IsAlive);
+            Assert.IsFalse(agent.IsActive);
             Assert.IsNotNull(agent.Killer);
         }
 
@@ -152,7 +152,7 @@ namespace Subterfuge.Test
 
             agent.Attack(attacker);
             Assert.IsTrue(agent.WasAttacked);
-            Assert.IsTrue(agent.IsAlive);
+            Assert.IsTrue(agent.IsActive);
         }
 
         [Test]
@@ -193,14 +193,14 @@ namespace Subterfuge.Test
             agent.Protect(protector);
             agent.Attack(attacker);
             Assert.IsTrue(agent.WasAttacked);
-            Assert.IsTrue(agent.IsAlive);
+            Assert.IsTrue(agent.IsActive);
             Assert.IsNull(agent.Killer);
 
             agent.Reset();
 
             agent.Attack(attacker);
             Assert.IsTrue(agent.WasAttacked);
-            Assert.IsFalse(agent.IsAlive);
+            Assert.IsFalse(agent.IsActive);
             Assert.IsNotNull(agent.Killer);
             Assert.AreSame(attacker, agent.Killer);
         }
@@ -211,7 +211,7 @@ namespace Subterfuge.Test
             Agent agent = new Hacker();
 
             agent.Execute();
-            Assert.IsFalse(agent.IsAlive);
+            Assert.IsFalse(agent.IsActive);
             Assert.IsTrue(agent.WasKilled);
             Assert.IsNull(agent.Killer);
         }

@@ -100,7 +100,7 @@ namespace Subterfuge.Agents
 
         protected InterrogatorReportType GetInterrogatorReportType()
         {
-            if (!Target.IsAlive || IsBlocked)
+            if (!Target.IsActive || IsBlocked)
             {
                 return InterrogatorReportType.Blocked;
             }

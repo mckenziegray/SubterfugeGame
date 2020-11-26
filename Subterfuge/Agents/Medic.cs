@@ -19,7 +19,7 @@ namespace Subterfuge.Agents
 
         protected override void Act()
         {
-            if (Target.IsAlive && Target != this)
+            if (Target.IsActive && Target != this)
                 Target.Protect(this, false);
         }
 
@@ -48,7 +48,7 @@ namespace Subterfuge.Agents
 
         protected MedicReportType GetMedicReportType()
         {
-            if (!Target.IsAlive || IsBlocked)
+            if (!Target.IsActive || IsBlocked)
                 return MedicReportType.Blocked;
             else if (Target.WasAttacked)
                 return MedicReportType.Attacked;
