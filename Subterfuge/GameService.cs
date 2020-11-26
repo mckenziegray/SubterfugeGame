@@ -35,12 +35,11 @@ namespace Subterfuge
             typeof(Sleeper)
         };
 
-        public List<List<string>> Evidence { get; protected set; } = new();
-
         public static Random Random { get; private set; } = new();
 
         public int Round { get; protected set; }
         public AgentList Agents { get; protected set; }
+        public List<List<string>> Evidence { get; protected set; } = new();
 
         private static List<string> _generatedCodenames = new();
 
@@ -49,6 +48,36 @@ namespace Subterfuge
             Reset();
         }
 
+        /// <summary>
+        /// Generates an random codename that no other agent in this game has yet.
+        /// </summary>
+        /// <returns>The generated codename.</returns>
+        public static string GenerateUniqueCodename()
+        {
+            string codename;
+            do
+                codename = GenerateCodename();
+            while (_generatedCodenames.Contains(codename));
+
+            _generatedCodenames.Add(codename);
+
+            return codename;
+        }
+
+        /// <summary>
+        /// Resets the game.
+        /// </summary>
+        public void Reset()
+        {
+            Round = 1;
+            Agents = new AgentList();
+            Evidence.Clear();
+            _generatedCodenames.Clear();
+        }
+
+        /// <summary>
+        /// Runs all automated functions for the round. This includes NPC target selection, agent actions, and storing all related evidence.
+        /// </summary>
         public void PlayRound()
         {
             foreach (Agent agent in Agents.OrderedList)
@@ -77,7 +106,7 @@ namespace Subterfuge
             }
 
             foreach (PlayerAgent agent in Agents.PlayerAgents.Where(a => a.IsActing && a.IsAlive))
-                roundEvidence.Add(agent.GetReportConcise());
+                roundEvidence.Add(agent.GetReportBrief());
 
             foreach (Agent agent in Agents.OrderedList.Where(a => a.WasKilled))
                 roundEvidence.Add($"The {agent.Killer.Name} killed the {agent.Name} ({agent.Codename}).");
@@ -86,6 +115,9 @@ namespace Subterfuge
             #endregion
         }
 
+        /// <summary>
+        /// Ends the round and adds execution information to evidence if necessary.
+        /// </summary>
         public void EndRound()
         {
             // This block is meant as a fail-safe and should never actually be hit.
@@ -99,26 +131,10 @@ namespace Subterfuge
             Agents.OrderedList.ForEach(a => a.Reset());
         }
 
-        public void Reset()
-        {
-            Round = 1;
-            Agents = new AgentList();
-            Evidence.Clear();
-            _generatedCodenames.Clear();
-        }
-
-        public static string GenerateUniqueCodename()
-        {
-            string codename;
-            do
-                codename = GenerateCodename();
-            while (_generatedCodenames.Contains(codename));
-
-            _generatedCodenames.Add(codename);
-
-            return codename;
-        }
-
+        /// <summary>
+        /// Generates a random agent codename.
+        /// </summary>
+        /// <returns>The generated codename.</returns>
         private static string GenerateCodename()
         {
             return string.Format("{0}{1}-{2}{3}{4}",

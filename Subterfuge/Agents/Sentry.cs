@@ -28,7 +28,7 @@ namespace Subterfuge.Agents
             };
         }
 
-        protected override string GetReportConciseAction()
+        protected override string GetReportBriefAction()
         {
             return $" {Target.Codename} was visited by" + Target.Visitors.Count switch
             {
@@ -38,7 +38,7 @@ namespace Subterfuge.Agents
             };
         }
 
-        public override ReportType GetReportType()
+        protected override ReportType GetReportType()
         {
             if (IsBlocked)
                 return ReportType.Blocked;

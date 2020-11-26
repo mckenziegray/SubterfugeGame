@@ -9,6 +9,9 @@ namespace Subterfuge.Agents
         public override Allegiance Allegiance => Allegiance.Enemy;
         public override bool RequiresTarget => true;
 
+        /// <summary>
+        /// The chance that this agent will target the <see cref="Sleeper"/> specifically.
+        /// </summary>
         private const double CHANCE_TO_TARGET_SLEEPER = 0.5;
 
         public Fabricator() : base() { }

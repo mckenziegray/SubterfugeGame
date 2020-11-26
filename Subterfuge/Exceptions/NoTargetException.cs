@@ -1,8 +1,10 @@
-﻿using Subterfuge.Enums;
-using System;
+﻿using System;
 
 namespace Subterfuge.Exceptions
 {
+    /// <summary>
+    /// An exception to be thrown when an agent tries to act without a target.
+    /// </summary>
     public class NoTargetException : Exception
     {
         public Type AgentType { get; protected set; }

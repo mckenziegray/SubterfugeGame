@@ -52,12 +52,6 @@ namespace Subterfuge.Test
         }
 
         [Test]
-        public void TestSelectTarget()
-        {
-            Assert.Throws<NotSupportedException>(() => Agent.SelectTarget(Game.Agents));
-        }
-
-        [Test]
         public void TestAct()
         {
             Helpers.TestBlockAction(Agent, Game);

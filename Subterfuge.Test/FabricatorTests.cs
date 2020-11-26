@@ -44,8 +44,8 @@ namespace Subterfuge.Test
             int numTargets = 10000;
             List<Type> targets = new List<Type>(numTargets);
 
-            Agent mastermind = Game.Agents[nameof(Mastermind)];
-            Agent drudge = Game.Agents[nameof(Drudge)];
+            NonPlayerAgent mastermind = (NonPlayerAgent)Game.Agents[nameof(Mastermind)];
+            NonPlayerAgent drudge = (NonPlayerAgent)Game.Agents[nameof(Drudge)];
 
             for (int i = 0; i < numTargets; i++)
             {

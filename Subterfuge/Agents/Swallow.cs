@@ -5,13 +5,13 @@ namespace Subterfuge.Agents
 {
     public class Swallow : PlayerAgent
     {
-        public override Allegiance Allegiance => Allegiance.Ally;
-        public override bool RequiresTarget => true;
         public override string Name => Gender switch
         {
             Gender.Male => "Raven",
             Gender.Female or _ => "Swallow"
         };
+        public override Allegiance Allegiance => Allegiance.Ally;
+        public override bool RequiresTarget => true;
 
         public Swallow() : base() { }
 
@@ -48,7 +48,7 @@ namespace Subterfuge.Agents
                 };
         }
 
-        public override ReportType GetReportType()
+        protected override ReportType GetReportType()
         {
             if (Target is null)
                 throw new ArgumentNullException(nameof(Target));

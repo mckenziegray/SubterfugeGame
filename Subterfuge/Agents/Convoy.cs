@@ -26,7 +26,7 @@ namespace Subterfuge.Agents
                 };
         }
 
-        public override ReportType GetReportType()
+        protected override ReportType GetReportType()
         {
             if (Target == this || IsBlocked)
                 return ReportType.Blocked;
