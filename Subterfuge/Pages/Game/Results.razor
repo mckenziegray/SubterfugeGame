@@ -1,5 +1,5 @@
 ﻿@page "/results"
-@inherits RoundEnder
+@inherits GameEnder
 
 <br />
 <div class="row justify-content-center">
@@ -39,6 +39,10 @@
 @code {
     protected void Continue()
     {
+        // Redirect to the game over screen if the game is over
+        RedirectIfGameOver();
+
+        // Otherwise, continue the round
         Nav.NavigateTo("/execute");
     }
 }

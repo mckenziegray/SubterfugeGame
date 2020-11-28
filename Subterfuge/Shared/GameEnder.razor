@@ -1,0 +1,20 @@
+﻿@inject GameService Game
+
+@code {
+    /// <summary>
+    /// Redirects to the game over screen if the game is over. Otherwise, does nothing.
+    /// </summary>
+    protected void RedirectIfGameOver()
+    {
+        if (!Game.Agents[nameof(Android)].IsActive && !Game.Agents[nameof(Drudge)].IsActive && !Game.Agents[nameof(Mastermind)].IsActive)
+        {
+            // Win
+            Nav.NavigateTo("/gameover/true");
+        }
+        else if (!Game.Agents.OrderedList.Any(a => a.Allegiance == Allegiance.Ally && a.IsActive))
+        {
+            // Lose
+            Nav.NavigateTo("/gameover/false");
+        }
+    }
+}
