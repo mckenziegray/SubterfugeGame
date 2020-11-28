@@ -4,7 +4,7 @@
 <Grid NumColumns="2" Items="Game.Agents.PlayerAgents">
     <ItemTemplate>
         @{
-            bool disabled = !context.IsAlive || (!context.IsActing && NumSelected >= GameService.MAX_AGENT_SELECTIONS);
+            bool disabled = !context.IsActive || (!context.IsActing && NumSelected >= GameService.MAX_AGENT_SELECTIONS);
             <div class="btn-group-toggle" data-toggle="buttons">
                 <label class="btn btn-block btn-outline-dark btn-height-double @(context.IsActing ? "active" : disabled ? "disabled" : "")">
                     <input type="checkbox"
@@ -35,7 +35,7 @@
 
         if (isChecked)
         {
-            if (agent.IsAlive && NumSelected < GameService.MAX_AGENT_SELECTIONS)
+            if (agent.IsActive && NumSelected < GameService.MAX_AGENT_SELECTIONS)
             {
                 if (agent.RequiresTarget)
                     Nav.NavigateTo($"/selecttarget/{agent.GetType().Name}");

@@ -7,7 +7,7 @@
         @{
             string modalId = $"modal-execute-{context.Name}";
 
-            if (context.IsAlive)
+            if (context.IsActive)
             {
                 <Modal id="@modalId"
                        ConfirmButtonText="Confirm"
@@ -18,12 +18,12 @@
             }
         }
         <button type="button"
-                class="btn btn-block btn-dark @(context.IsAlive ? "btn-height-double" : "")"
+                class="btn btn-block btn-dark @(context.IsActive ? "btn-height-double" : "")"
                 data-toggle="modal"
                 data-target="#@modalId"
-                disabled="@(!context.IsAlive)">
+                disabled="@(!context.IsActive)">
             @context.Codename
-            @if (!context.IsAlive)
+            @if (!context.IsActive)
             {
                 <br />
                 <span class="muted">@context.Name</span>

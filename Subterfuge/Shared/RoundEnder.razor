@@ -3,12 +3,12 @@
 @code {
     protected void EndRound()
     {
-        if (!Game.Agents[nameof(Android)].IsAlive && !Game.Agents[nameof(Drudge)].IsAlive && !Game.Agents[nameof(Mastermind)].IsAlive)
+        if (!Game.Agents[nameof(Android)].IsActive && !Game.Agents[nameof(Drudge)].IsActive && !Game.Agents[nameof(Mastermind)].IsActive)
         {
             // Win
             Nav.NavigateTo("/gameover/true");
         }
-        else if (!Game.Agents.OrderedList.Any(a => a.Allegiance == Allegiance.Ally && a.IsAlive))
+        else if (!Game.Agents.OrderedList.Any(a => a.Allegiance == Allegiance.Ally && a.IsActive))
         {
             // Lose
             Nav.NavigateTo("/gameover/false");

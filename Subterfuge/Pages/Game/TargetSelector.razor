@@ -4,11 +4,11 @@
 <Grid NumColumns="2" Items="Game.Agents.ShuffledList">
     <ItemTemplate>
         <button type="button"
-                class="btn btn-block btn-dark @(context.IsAlive ? "btn-height-double" : "")"
+                class="btn btn-block btn-dark @(context.IsActive ? "btn-height-double" : "")"
                 @onclick="() => SetTarget(context)"
-                disabled="@(!context.IsAlive)">
+                disabled="@(!context.IsActive)">
             @context.Codename
-            @if (!context.IsAlive)
+            @if (!context.IsActive)
             {
                 <br />
                 <span class="muted">@context.Name</span>
@@ -35,7 +35,7 @@
 
     protected void SetTarget(Agent target)
     {
-        if (target.IsAlive)
+        if (target.IsActive)
         {
             Agent.IsActing = true;
             Agent.Target = target;

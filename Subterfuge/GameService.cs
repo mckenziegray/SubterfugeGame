@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Subterfuge.Agents;
 using Subterfuge.Enums;
@@ -41,7 +42,7 @@ namespace Subterfuge
         public int Round { get; protected set; }
         public double Morale { get; protected set; }
         public AgentList Agents { get; protected set; }
-        public List<List<string>> Evidence { get; protected set; } = new();
+        public ObservableCollection<List<string>> Evidence { get; protected set; } = new();
 
         private static List<string> _generatedCodenames = new();
 
@@ -92,7 +93,7 @@ namespace Subterfuge
             }
 
             #region Populate initial evidence
-            while (Evidence.Count < Round - 1)
+            while (Evidence.Count < Round)
                 Evidence.Add(new List<string>());
 
             foreach (Agent agent in Agents.PlayerAgents.Where(a => a.IsActing))
@@ -123,7 +124,7 @@ namespace Subterfuge
         public void EndRound()
         {
             // This block is meant as a fail-safe and should never actually be hit.
-            while (Evidence.Count < Round - 1)
+            while (Evidence.Count < Round)
                 Evidence.Add(new List<string>());
 
             foreach (Agent agent in Agents.OrderedList)
@@ -156,10 +157,10 @@ namespace Subterfuge
                 if (Random.NextDouble() < CHANCE_TO_DESERT)
                 {
                     List<Agent> possibleDeserters = Agents.ShuffledList.Where(a => a is PlayerAgent && a.IsActive).ToList();
-                    PlayerAgent deserter = (PlayerAgent)possibleDeserters[Random.Next(possibleDeserters.Count)]
+                    PlayerAgent deserter = (PlayerAgent)possibleDeserters[Random.Next(possibleDeserters.Count)];
                     deserter.Desert();
 
-                    while (Evidence.Count < Round - 1)
+                    while (Evidence.Count < Round)
                         Evidence.Add(new List<string>());
 
                     Evidence[Round - 1].Add($"The {deserter.Name} deserted.");
