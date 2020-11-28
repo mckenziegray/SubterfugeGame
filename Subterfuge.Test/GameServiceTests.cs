@@ -63,13 +63,13 @@ namespace Subterfuge.Test
 
             // Make sure the initial values make sense
             Assert.IsTrue(_game.Round > 1);
-            Assert.IsFalse(_game.Agents[nameof(Hacker)].IsAlive);
+            Assert.IsFalse(_game.Agents[nameof(Hacker)].IsActive);
 
             _game.Reset();
 
             // Make sure the game actually got reset
             Assert.AreEqual(1, _game.Round);
-            Assert.IsTrue(_game.Agents[nameof(Hacker)].IsAlive);
+            Assert.IsTrue(_game.Agents[nameof(Hacker)].IsActive);
         }
 
         [Test]
@@ -80,7 +80,7 @@ namespace Subterfuge.Test
 
             // Make sure that the values to be checked later are what they should be before the game starts
             Assert.IsFalse(_game.Agents.OrderedList.Any(a => a.WasFramed));
-            Assert.IsTrue(_game.Agents[nameof(Fabricator)].IsAlive);
+            Assert.IsTrue(_game.Agents[nameof(Fabricator)].IsActive);
             Assert.IsNull(_game.Agents[nameof(Fabricator)].Target);
 
             _game.PlayRound();
@@ -90,7 +90,7 @@ namespace Subterfuge.Test
 
             // Make sure that actions actually happened
             // If the Fabricator's target was framed, the Fabricator acted; if the Fabricator is dead, the Android acted
-            Assert.IsTrue(_game.Agents[nameof(Fabricator)].Target.WasFramed || !_game.Agents[nameof(Fabricator)].IsAlive);
+            Assert.IsTrue(_game.Agents[nameof(Fabricator)].Target.WasFramed || !_game.Agents[nameof(Fabricator)].IsActive);
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿@page "/results"
-@inherits RoundEnder
+@inherits GameEnder
 
 <br />
 <div class="row justify-content-center">
@@ -7,7 +7,7 @@
         <h3>Reports</h3>
         <div class="reports row">
             <div class="col-12">
-                @foreach (PlayerAgent agent in Game.Agents.PlayerAgents.Where(a => a.IsAlive && a.IsActing))
+                @foreach (PlayerAgent agent in Game.Agents.PlayerAgents.Where(a => a.IsActive && a.IsActing))
                 {
                     <h4>@agent.Name's Report</h4>
                     <p>@agent.GetReport()</p>
@@ -39,6 +39,10 @@
 @code {
     protected void Continue()
     {
+        // Redirect to the game over screen if the game is over
+        RedirectIfGameOver();
+
+        // Otherwise, continue the round
         Nav.NavigateTo("/execute");
     }
 }

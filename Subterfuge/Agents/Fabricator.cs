@@ -18,7 +18,7 @@ namespace Subterfuge.Agents
 
         protected override void Act()
         {
-            if (Target.IsAlive && Target != this)
+            if (Target.IsActive && Target != this)
                 Target.Frame(this);
         }
 
@@ -27,14 +27,14 @@ namespace Subterfuge.Agents
             List<Agent> validTargets = agents.ShuffledList.Where(a => 
                 a != this && 
                 a.Allegiance != Allegiance.Enemy && 
-                a.IsAlive &&
+                a.IsActive &&
                 a != agents[nameof(Mastermind)].Target &&
                 a != agents[nameof(Drudge)].Target &&
                 a is not Sleeper // Sleeper is a valid target but it's treated differently
             ).ToList();
 
             // Give the Sleeper a higher chance of being selected than the others
-            if (agents[nameof(Sleeper)].IsAlive && GameService.Random.NextDouble() <= CHANCE_TO_TARGET_SLEEPER)
+            if (agents[nameof(Sleeper)].IsActive && GameService.Random.NextDouble() <= CHANCE_TO_TARGET_SLEEPER)
             {
                 Target = agents[nameof(Sleeper)];
                 IsActing = true;

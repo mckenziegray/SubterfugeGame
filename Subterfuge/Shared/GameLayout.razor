@@ -64,11 +64,16 @@
 
     protected override void OnInitialized()
     {
-        EvidenceIndex = Game.Evidence.Count - 1;
+        Game.Evidence.CollectionChanged += Evidence_CollectionChanged;
     }
 
     protected void ChangeEvidencePage(int change)
     {
         EvidenceIndex = Math.Clamp(EvidenceIndex + change, 0, Game.Evidence.Count - 1);
+    }
+
+    private void Evidence_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        EvidenceIndex = Game.Evidence.Count - 1;
     }
 }

@@ -72,7 +72,7 @@ namespace Subterfuge.Agents
                 {
                     InterrogatorReportType.Android_Assassin_Sentry => " the Android, the Assassin, or the Sentry.",
                     InterrogatorReportType.Convoy_Drudge => " the Convoy or the Drudge.",
-                    InterrogatorReportType.Cutout_Mastermind_Swallow => " the Cutout, the Mastermind, or the Swallow/Raven.",
+                    InterrogatorReportType.Cutout_Mastermind_Swallow => " the Cut-out, the Mastermind, or the Swallow/Raven.",
                     InterrogatorReportType.Fabricator_Hacker => " the Fabricator or the Hacker.",
                     InterrogatorReportType.Marshal_Saboteur => " the Marshal or the Saboteur.",
                     InterrogatorReportType.Medic_Sleeper => " the Medic or the Sleeper.",
@@ -100,7 +100,7 @@ namespace Subterfuge.Agents
 
         protected InterrogatorReportType GetInterrogatorReportType()
         {
-            if (!Target.IsAlive || IsBlocked)
+            if (!Target.IsActive || IsBlocked)
             {
                 return InterrogatorReportType.Blocked;
             }

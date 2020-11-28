@@ -20,7 +20,7 @@ namespace Subterfuge.Agents
 
         public override void SelectTarget(AgentList agents)
         {
-            List<Agent> validTargets = agents.ShuffledList.Where(a => a != this && a.IsAlive).ToList();
+            List<Agent> validTargets = agents.ShuffledList.Where(a => a != this && a.IsActive).ToList();
 
             if (validTargets.Any())
             {

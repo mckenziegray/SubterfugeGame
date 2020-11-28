@@ -21,7 +21,7 @@ namespace Subterfuge.Agents
         {
             if (GameService.Random.NextDouble() <= CHANCE_TO_ATTACK)
             {
-                List<Agent> validTargets = agents.ShuffledList.Where(a => a != this && a.IsAlive && a is not Mastermind).ToList();
+                List<Agent> validTargets = agents.ShuffledList.Where(a => a != this && a.IsActive && a is not Mastermind).ToList();
 
                 if (validTargets.Any())
                 {
@@ -33,7 +33,7 @@ namespace Subterfuge.Agents
 
         protected override void Act()
         {
-            if (Target.IsAlive && Target != this)
+            if (Target.IsActive && Target != this)
                 Target.Attack(this);
         }
     }

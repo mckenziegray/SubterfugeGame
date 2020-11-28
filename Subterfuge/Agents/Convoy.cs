@@ -11,7 +11,7 @@ namespace Subterfuge.Agents
 
         protected override void Act()
         {
-            if (Target.IsAlive)
+            if (Target.IsActive)
                 Target.Protect(this, true);
         }
 
@@ -24,6 +24,11 @@ namespace Subterfuge.Agents
                     ReportType.Blocked => " However, I was preocupied. My apologies.",
                     _ => throw new NotImplementedException()
                 };
+        }
+
+        protected override string GetReportBriefAction()
+        {
+            return $" {Target.Codename} was visited by: {string.Join(", ", Target.Visitors)}";
         }
 
         protected override ReportType GetReportType()

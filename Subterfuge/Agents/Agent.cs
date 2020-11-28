@@ -30,9 +30,9 @@ namespace Subterfuge.Agents
         /// </summary>
         public abstract bool RequiresTarget { get; }
         /// <summary>
-        /// Whether this agent is still alive.
+        /// Whether this agent is still in the game. This will be set to false if an agent dies or deserts.
         /// </summary>
-        public bool IsAlive { get; protected set; }
+        public bool IsActive { get; protected set; }
         /// <summary>
         /// Whether this agent is acting this round.
         /// </summary>
@@ -76,15 +76,15 @@ namespace Subterfuge.Agents
         /// <summary>
         /// Whether this agent is role-blocked (prevented from acting).
         /// </summary>
-        public bool IsBlocked => Blocker?.IsAlive == true;
+        public bool IsBlocked => Blocker?.IsActive == true;
         /// <summary>
         /// Whether this agent is being protected from death.
         /// </summary>
-        public bool IsProtected => Protector != null && Protector.IsAlive && !Protector.IsBlocked;
+        public bool IsProtected => Protector != null && Protector.IsActive && !Protector.IsBlocked;
         /// <summary>
         /// Whether this agent is able to act.
         /// </summary>
-        public bool CanAct => IsAlive && !(RequiresTarget && Target is null) && !IsBlocked;
+        public bool CanAct => IsActive && !(RequiresTarget && Target is null) && !IsBlocked;
 
         /// <summary>
         /// If true, the <see cref="Protector"/> will be killed instead of this agent.
@@ -98,7 +98,7 @@ namespace Subterfuge.Agents
         {
             Codename = GameService.GenerateUniqueCodename();
             Gender = (Gender)GameService.Random.Next(2);
-            IsAlive = true;
+            IsActive = true;
             Reset();
         }
 
@@ -197,7 +197,7 @@ namespace Subterfuge.Agents
         /// <summary>
         /// Reset this agent for a new round.
         /// </summary>
-        public void Reset()
+        public virtual void Reset()
         {
             IsActing = false;
             WasFramed = false;
@@ -223,7 +223,7 @@ namespace Subterfuge.Agents
         /// <param name="killer">The agent killing this agent.</param>
         protected void Kill(Agent killer)
         {
-            IsAlive = false;
+            IsActive = false;
             Killer = killer;
             WasKilled = true;
         }

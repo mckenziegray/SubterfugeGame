@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Subterfuge.Agents;
 using Subterfuge.Enums;
@@ -9,7 +10,8 @@ namespace Subterfuge
     public class GameService
     {
         public const int MAX_AGENT_SELECTIONS = 3;
-
+        public const double DESERTION_MORALE_THRESHOLD = -15;
+        public const double CHANCE_TO_DESERT = 0.5;
         /// <summary>
         /// A list of all agent types. The order of this list is the order in which agents will act.
         /// </summary>
@@ -38,8 +40,16 @@ namespace Subterfuge
         public static Random Random { get; private set; } = new();
 
         public int Round { get; protected set; }
+        public double Morale { get; protected set; }
+        public string MoraleLevel => Morale switch
+        {
+            <= -15 => "Panicked",
+            <= -10 => "Alarmed",
+            <= -5 => "Uneasy",
+            _ => "Calm"
+        };
         public AgentList Agents { get; protected set; }
-        public List<List<string>> Evidence { get; protected set; } = new();
+        public ObservableCollection<List<string>> Evidence { get; protected set; } = new();
 
         private static List<string> _generatedCodenames = new();
 
@@ -70,6 +80,7 @@ namespace Subterfuge
         public void Reset()
         {
             Round = 1;
+            Morale = 0;
             Agents = new AgentList();
             Evidence.Clear();
             _generatedCodenames.Clear();
@@ -89,7 +100,8 @@ namespace Subterfuge
             }
 
             #region Populate initial evidence
-            List<string> roundEvidence = new List<string>();
+            while (Evidence.Count < Round)
+                Evidence.Add(new List<string>());
 
             foreach (Agent agent in Agents.PlayerAgents.Where(a => a.IsActing))
             {
@@ -102,16 +114,14 @@ namespace Subterfuge
                     Sentry => "watch",
                     _ => throw new NotImplementedException()
                 };
-                roundEvidence.Add($"You ordered the {agent.Name} to {action} {agent.Target.Codename}.");
+                Evidence[Round - 1].Add($"You ordered the {agent.Name} to {action} {agent.Target.Codename}.");
             }
 
-            foreach (PlayerAgent agent in Agents.PlayerAgents.Where(a => a.IsActing && a.IsAlive))
-                roundEvidence.Add(agent.GetReportBrief());
+            foreach (PlayerAgent agent in Agents.PlayerAgents.Where(a => a.IsActing && a.IsActive))
+                Evidence[Round - 1].Add(agent.GetReportBrief());
 
             foreach (Agent agent in Agents.OrderedList.Where(a => a.WasKilled))
-                roundEvidence.Add($"The {agent.Killer.Name} killed the {agent.Name} ({agent.Codename}).");
-
-            Evidence.Add(roundEvidence);
+                Evidence[Round - 1].Add($"The {agent.Killer.Name} killed the {agent.Name} ({agent.Codename}).");
             #endregion
         }
 
@@ -121,14 +131,52 @@ namespace Subterfuge
         public void EndRound()
         {
             // This block is meant as a fail-safe and should never actually be hit.
-            while (Evidence.Count < Round - 1)
+            while (Evidence.Count < Round)
                 Evidence.Add(new List<string>());
 
-            foreach (Agent agent in Agents.OrderedList.Where(a => a.WasExecuted))
-                Evidence[Round - 1].Add($"You executed the {agent.Name} ({agent.Codename}).");
+            foreach (Agent agent in Agents.OrderedList)
+            {
+                if (agent.WasExecuted)
+                {
+                    Evidence[Round - 1].Add($"You executed the {agent.Name} ({agent.Codename}).");
+                    if (agent is Sleeper && agent.Target is not null && agent.Target.WasKilled)
+                        Evidence[Round - 1].Add($"The {agent.Name} killed the {agent.Target.Name} ({agent.Target.Codename}).");
+
+                    if (agent is Cutout)
+                        Morale -= 10;
+                    else if (agent.Allegiance == Allegiance.Ally)
+                        Morale -= 5;
+                    else if (agent.Allegiance == Allegiance.Enemy)
+                        Morale += 3;
+                }
+                else if (agent.WasKilled)
+                {
+                    if (agent.Allegiance == Allegiance.Enemy)
+                        Morale += 2;
+                    else
+                        Morale -= 3;
+                }
+            }
             
             ++Round;
             Agents.OrderedList.ForEach(a => a.Reset());
+
+            // Determine if an agent will desert
+            // this block mus come after the agents have reset
+            if (Morale < DESERTION_MORALE_THRESHOLD)
+            {
+                if (Random.NextDouble() < CHANCE_TO_DESERT)
+                {
+                    List<Agent> possibleDeserters = Agents.ShuffledList.Where(a => a is PlayerAgent && a.IsActive).ToList();
+                    PlayerAgent deserter = (PlayerAgent)possibleDeserters[Random.Next(possibleDeserters.Count)];
+                    deserter.Desert();
+
+                    while (Evidence.Count < Round)
+                        Evidence.Add(new List<string>());
+
+                    Evidence[Round - 1].Add($"The {deserter.Name} deserted.");
+                }
+            }
         }
 
         /// <summary>

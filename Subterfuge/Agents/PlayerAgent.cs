@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Subterfuge.Enums;
 
 namespace Subterfuge.Agents
@@ -9,6 +6,19 @@ namespace Subterfuge.Agents
     public abstract class PlayerAgent : Agent
     {
         public override Allegiance Allegiance => Allegiance.Ally;
+        /// <summary>
+        /// Whether this agent deserted this round.
+        /// </summary>
+        public bool Deserted { get; set; }
+
+        /// <summary>
+        /// Removes this agent from the game.
+        /// </summary>
+        public void Desert()
+        {
+            IsActive = false;
+            Deserted = true;
+        }
 
         /// <summary>
         /// Gets this agent's full report for the round.
@@ -41,6 +51,12 @@ namespace Subterfuge.Agents
                     ReportType.SelfIdentify => $" they are {Codename}.",
                     _ => throw new NotImplementedException()
                 };
+        }
+
+        public override void Reset()
+        {
+            Deserted = false;
+            base.Reset();
         }
 
         /// <summary>

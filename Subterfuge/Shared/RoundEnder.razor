@@ -1,23 +1,17 @@
-﻿@inject GameService Game
+﻿@inherits GameEnder
+@inject GameService Game
 
 @code {
+    /// <summary>
+    /// Redirects to the game over screen if the game is over. Otherwise, ends the round and starts a new round.
+    /// </summary>
     protected void EndRound()
     {
-        if (!Game.Agents[nameof(Android)].IsAlive && !Game.Agents[nameof(Drudge)].IsAlive && !Game.Agents[nameof(Mastermind)].IsAlive)
-        {
-            // Win
-            Nav.NavigateTo("/gameover/true");
-        }
-        else if (!Game.Agents.OrderedList.Any(a => a.Allegiance == Allegiance.Ally && a.IsAlive))
-        {
-            // Lose
-            Nav.NavigateTo("/gameover/false");
-        }
-        else
-        {
-            // Keep playing
-            Game.EndRound();
-            Nav.NavigateTo("/selectagents");
-        }
+        // Redirect to the game over screen if the game is over
+        RedirectIfGameOver();
+
+        // If not, end the round and keep playing
+        Game.EndRound();
+        Nav.NavigateTo("/newround");
     }
 }
