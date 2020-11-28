@@ -41,6 +41,13 @@ namespace Subterfuge
 
         public int Round { get; protected set; }
         public double Morale { get; protected set; }
+        public string MoraleLevel => Morale switch
+        {
+            <= -15 => "Panicked",
+            <= -10 => "Alarmed",
+            <= -5 => "Uneasy",
+            _ => "Calm"
+        };
         public AgentList Agents { get; protected set; }
         public ObservableCollection<List<string>> Evidence { get; protected set; } = new();
 
@@ -132,6 +139,8 @@ namespace Subterfuge
                 if (agent.WasExecuted)
                 {
                     Evidence[Round - 1].Add($"You executed the {agent.Name} ({agent.Codename}).");
+                    if (agent is Sleeper && agent.Target is not null && agent.Target.WasKilled)
+                        Evidence[Round - 1].Add($"The {agent.Name} killed the {agent.Target.Name} ({agent.Target.Codename}).");
 
                     if (agent is Cutout)
                         Morale -= 10;
@@ -152,6 +161,8 @@ namespace Subterfuge
             ++Round;
             Agents.OrderedList.ForEach(a => a.Reset());
 
+            // Determine if an agent will desert
+            // this block mus come after the agents have reset
             if (Morale < DESERTION_MORALE_THRESHOLD)
             {
                 if (Random.NextDouble() < CHANCE_TO_DESERT)

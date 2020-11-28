@@ -6,6 +6,10 @@ namespace Subterfuge.Agents
     public abstract class PlayerAgent : Agent
     {
         public override Allegiance Allegiance => Allegiance.Ally;
+        /// <summary>
+        /// Whether this agent deserted this round.
+        /// </summary>
+        public bool Deserted { get; set; }
 
         /// <summary>
         /// Removes this agent from the game.
@@ -13,6 +17,7 @@ namespace Subterfuge.Agents
         public void Desert()
         {
             IsActive = false;
+            Deserted = true;
         }
 
         /// <summary>
@@ -46,6 +51,12 @@ namespace Subterfuge.Agents
                     ReportType.SelfIdentify => $" they are {Codename}.",
                     _ => throw new NotImplementedException()
                 };
+        }
+
+        public override void Reset()
+        {
+            Deserted = false;
+            base.Reset();
         }
 
         /// <summary>

@@ -1,0 +1,31 @@
+﻿@page "/newround"
+@inherits GameEnder
+@inject GameService Game
+@using System.Threading.Tasks
+
+
+<div class="row justify-content-center">
+    <div class="col center-contents-horizontal">
+        <h2>Day @Game.Round</h2>
+        <p>Morale: @Game.MoraleLevel</p>
+
+        @foreach (PlayerAgent agent in Game.Agents.PlayerAgents.Where(a => a.Deserted))
+        {
+            <p>Disilliusioned by your leadership, the @agent.Name abandons @agent.Gender.ToPossessivePronoun().ToLower() post.</p>
+        }
+    </div>
+</div>
+
+@code {
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        Task.Delay(5000).ContinueWith(t =>
+        {
+            RedirectIfGameOver();
+
+            Nav.NavigateTo("/selectagents");
+        });
+
+        return base.OnAfterRenderAsync(firstRender);
+    }
+}

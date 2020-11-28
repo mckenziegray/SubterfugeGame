@@ -26,6 +26,11 @@ namespace Subterfuge.Agents
                 };
         }
 
+        protected override string GetReportBriefAction()
+        {
+            return $" {Target.Codename} was visited by: {string.Join(", ", Target.Visitors)}";
+        }
+
         protected override ReportType GetReportType()
         {
             if (Target == this || IsBlocked)

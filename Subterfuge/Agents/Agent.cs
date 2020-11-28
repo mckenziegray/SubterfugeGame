@@ -197,7 +197,7 @@ namespace Subterfuge.Agents
         /// <summary>
         /// Reset this agent for a new round.
         /// </summary>
-        public void Reset()
+        public virtual void Reset()
         {
             IsActing = false;
             WasFramed = false;
