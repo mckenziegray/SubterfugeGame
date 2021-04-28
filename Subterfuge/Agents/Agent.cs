@@ -38,6 +38,10 @@ namespace Subterfuge.Agents
         /// </summary>
         public bool IsActing { get; set; }
         /// <summary>
+        /// Whether this agent should visit its target when it acts.
+        /// </summary>
+        public bool VisitTarget { get; set; }
+        /// <summary>
         /// The agent that this agent is targeting.
         /// </summary>
         public Agent Target { get; set; }
@@ -108,7 +112,9 @@ namespace Subterfuge.Agents
         /// <param name="attacker">The agent attacking this agent.</param>
         public void Attack(Agent attacker)
         {
-            Visit(attacker);
+            if (attacker.VisitTarget)
+                Visit(attacker);
+
             WasAttacked = true;
 
             if (IsProtected)
@@ -131,7 +137,8 @@ namespace Subterfuge.Agents
         /// <param name="blocker">The agent blocking this agent.</param>
         public void Block(Agent blocker)
         {
-            Visit(blocker);
+            if (blocker.VisitTarget)
+                Visit(blocker);
 
             Blocker = blocker;
         }
@@ -143,7 +150,8 @@ namespace Subterfuge.Agents
         /// <param name="redirect">Whether the protector should die if an attempt is made to kill this agent.</param>
         public void Protect(Agent protector, bool redirect = false)
         {
-            Visit(protector);
+            if (protector.VisitTarget)
+                Visit(protector);
 
             Protector = protector;
             RedirectKill = redirect;
@@ -155,7 +163,8 @@ namespace Subterfuge.Agents
         /// <param name="framer">The agent framing this agent.</param>
         public void Frame(Agent framer)
         {
-            Visit(framer);
+            if (framer.VisitTarget)
+                Visit(framer);
 
             WasFramed = true;
         }
@@ -204,6 +213,7 @@ namespace Subterfuge.Agents
             WasAttacked = false;
             WasKilled = false;
             RedirectKill = false;
+            VisitTarget = true;
 
             Target = null;
             Blocker = null;

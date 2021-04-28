@@ -17,14 +17,15 @@ namespace Subterfuge.Agents
 
         protected override void Act()
         {
-
             if (Target is Android || (Target is Mastermind && Target.IsActing))
             {
                 // The Android is immune to being role-blocked and will instead try to kill the unit targeting it
                 // The Mastermind will do the same only if the Drudge is dead
-                Target.Visit(this);
+                if (VisitTarget)
+                    Target.Visit(this);
                 Target.Target = this;
                 Target.IsActing = true;
+                Target.VisitTarget = false;
             }
             else if (Target.IsActive && Target != this)
             {

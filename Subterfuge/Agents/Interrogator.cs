@@ -24,7 +24,8 @@ namespace Subterfuge.Agents
 
         protected override void Act()
         {
-            Target.Visit(this);
+            if (VisitTarget)
+                Target.Visit(this);
         }
 
         public override string GetReport()
