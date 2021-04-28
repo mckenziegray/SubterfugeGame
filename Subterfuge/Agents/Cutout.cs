@@ -14,7 +14,7 @@ namespace Subterfuge.Agents
 
         protected override void Act()
         {
-            if (Target != this)
+            if (Target != this && VisitTarget)
                 Target.Visit(this);
         }
 
